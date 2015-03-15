@@ -3797,8 +3797,6 @@ public class Player extends Entity {
 						stackedItemAmountToKeep = numberOfKeptItemsRemaining;
 					}
 
-					System.out.println(stackedItemAmountToKeep + " items to keep");
-
 					// determine if there is any of the stackable item left to pick up
 					if(lastItem.getAmount() - stackedItemAmountToKeep > 0) {
 						stackedItemsRemainingOnGround.put(lastItem.getId(), lastItem.getAmount() - stackedItemAmountToKeep);
