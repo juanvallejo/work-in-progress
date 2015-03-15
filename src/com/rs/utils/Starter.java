@@ -39,7 +39,7 @@ public class Starter {
 			player.setSpins(5);
 		hasRegistered = true;
 		if (hasRegistered == false) {
-		// World.sendWorldMessage("<col=01DFD7>Welcome<col> " + player.getDisplayName() + "<col=01DFD7>, to a Work In Progress!</col>", false);
+		World.sendWorldMessage("<col=01DFD7>Welcome<col> " + player.getDisplayName() + "<col=01DFD7>, to a Work In Progress!</col>", false);
 		}
  
         player.getHintIconsManager().removeUnsavedHintIcon();

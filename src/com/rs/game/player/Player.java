@@ -1109,7 +1109,6 @@ public class Player extends Entity {
 		resetFarm();
 		FriendChatsManager.joinChat("help", this);
 		getPackets().sendGameMessage("Welcome back to " + Settings.SERVER_NAME + ".");//TODO
-		getPackets().sendGameMessage("WARNING: You will now drop all items but three on death.");
 		resetNameOnLogin();
 		farmStatus();
 		refreshSqueal();
