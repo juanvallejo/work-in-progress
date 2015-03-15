@@ -317,8 +317,7 @@ public class Slayer {
 		player.getSkills().addXp(Skills.SLAYER,
 				npc.getCombatDefinitions().getHitpoints() / 10);
 		if (task.getAmount() == 0) {
-			task = null;
-			player.getTemporaryAttributtes().put("SlayerTask", task);
+			player.getTemporaryAttributtes().put("SlayerTask", null);
 		}
 	}
 
