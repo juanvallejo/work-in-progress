@@ -23,6 +23,7 @@ import java.util.TimerTask;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
+import java.util.HashMap;
 
 import com.rs.Settings;
 import com.rs.cores.CoresManager;
@@ -2489,7 +2490,7 @@ public class Player extends Entity {
 		if (hasSetupCannon == true && getInventory().getFreeSlots() < 4) {
 			getPackets().sendIComponentText(1069, 17, "Your cannon has been added to your bank.");
 		} else {
-		getPackets().sendIComponentText(1069, 17, Settings.recentUpdate+".");
+		getPackets().sendIComponentText(1069, 17, Settings.recentUpdate);
 		}
 	}
 	
@@ -3714,20 +3715,21 @@ public class Player extends Entity {
 
 		// add all equipped items to the total carried items by player list
 		for (int i = 0; i < 14; i++) {
-			if(equipment.getItem(i) != null
-					&& equipment.getItem(i).getId() != -1
-					&& equipment.getItem(i).getAmount() != -1)
-				containedItems.add(new Item(equipment.getItem(i).getId(),
-						equipment.getItem(i).getAmount()));
+			
+			// only go through items that exist and we are able to parse
+			if(equipment.getItem(i) != null && equipment.getItem(i).getId() != -1 && equipment.getItem(i).getAmount() != -1) {
+				containedItems.add(new Item(equipment.getItem(i).getId(), equipment.getItem(i).getAmount()));
+			}
+
 		}
 
-		// add all items int he player's inventory
+		// add all items in the player's inventory
 		for (int i = 0; i < 28; i++) {
-			if (inventory.getItem(i) != null
-					&& inventory.getItem(i).getId() != -1
-					&& inventory.getItem(i).getAmount() != -1)
-				containedItems.add(new Item(getInventory().getItem(i).getId(),
-						getInventory().getItem(i).getAmount()));
+
+			// only go through items that exist and we are able to parse
+			if (inventory.getItem(i) != null && inventory.getItem(i).getId() != -1 && inventory.getItem(i).getAmount() != -1) {
+				containedItems.add(new Item(getInventory().getItem(i).getId(), getInventory().getItem(i).getAmount()));
+			}
 		}
 
 		// determine if there are any items to "lose"
@@ -3750,10 +3752,20 @@ public class Player extends Entity {
 
 		}
 
-		// this arraylist will hold all of our kept items
-		CopyOnWriteArrayList<Item> keptItems = new CopyOnWriteArrayList<Item>();
+		// make sure the amount of kept items is at least the same as
+		// the amount of items our player currently has 
+		if(containedItems.size() < keptAmount) {
+			keptAmount = containedItems.size();
+		}
 
-		// instantiate a new item with an id of 1 and a market value of 1
+		// this arraylist will hold all of our kept items
+		CopyOnWriteArrayList<Item> keptItems 					= new CopyOnWriteArrayList<Item>();
+		HashMap<Integer, Integer> stackedItemsRemainingOnGround = new HashMap<Integer, Integer>();
+		ArrayList<Integer> listOfRemainingStackedItemIds 		= new ArrayList<Integer>();
+		
+		int numberOfKeptItemsRemaining 							= 3;
+
+		// instantiate a new item with an id of 1 and an amount of 1
 		Item lastItem = new Item(1, 1);
 
 		for (int i = 0; i < keptAmount; i++) {
@@ -3763,15 +3775,47 @@ public class Player extends Entity {
 				// determine the value of the item being cycled through
 				int price = item.getDefinitions().getValue();
 
+				// find the item with the max value out of the ones that remain in our containedItems array list
 				if (price >= lastItem.getDefinitions().getValue()) {
 					lastItem = item;
 				}
 
 			}
 
-			// add the item to kept items, and remove it from the items we are cycling through
-			keptItems.add(lastItem);
-			containedItems.remove(lastItem);
+			if(numberOfKeptItemsRemaining  > 0) {
+
+				containedItems.remove(lastItem);
+				
+				// determine if the item to keep is stackable
+				if(lastItem.getAmount() > 1) {
+
+					// we will keep three of the stacked item, minus the amount of items that
+					// we have already cycled through to keep
+					int stackedItemAmountToKeep = (3 - i) > lastItem.getAmount() ? lastItem.getAmount() : (3 - i);
+
+					if(stackedItemAmountToKeep > numberOfKeptItemsRemaining) {
+						stackedItemAmountToKeep = numberOfKeptItemsRemaining;
+					}
+
+					System.out.println(stackedItemAmountToKeep + " items to keep");
+
+					// determine if there is any of the stackable item left to pick up
+					if(lastItem.getAmount() - stackedItemAmountToKeep > 0) {
+						stackedItemsRemainingOnGround.put(lastItem.getId(), lastItem.getAmount() - stackedItemAmountToKeep);
+						listOfRemainingStackedItemIds.add(lastItem.getId());
+					}
+
+					lastItem 						= new Item(lastItem.getId(), stackedItemAmountToKeep);
+					numberOfKeptItemsRemaining 		-= stackedItemAmountToKeep;
+
+				} else {
+					numberOfKeptItemsRemaining--;
+				}
+
+				// add the item to kept items, and remove it from the items we are cycling through
+				keptItems.add(lastItem);				
+
+			}
 
 			// reset last item back to id of 1 and market value of 1
 			lastItem = new Item(1, 1);
@@ -3788,6 +3832,13 @@ public class Player extends Entity {
 			getInventory().addItem(item);
 		}
 
+		for(Integer itemId : listOfRemainingStackedItemIds) {
+			if(stackedItemsRemainingOnGround.get(itemId) != null) {
+				Item item = new Item(itemId, stackedItemsRemainingOnGround.get(itemId));
+				World.addGroundItem(item, getLastWorldTile(), killer == null ? this : killer, false, 180, true, true);
+			}
+		}
+
 		// add the rest of the kept items to the floor
 		for (Item item : containedItems) {
 
@@ -3796,6 +3847,7 @@ public class Player extends Entity {
 
 			// usually the case during pvp
 			if(killer != null) {
+
 				// determine the price of each item being dropped
 				int price = item.getDefinitions().getValue();
 
@@ -3803,6 +3855,7 @@ public class Player extends Entity {
 					killer.highestGPKill = price;
 					killer.out("Congratulations, You've just PK'd your highest loot at a cost of " + Shop.commas(Integer.toString(killer.highestGPKill))+" coins.");
 				}
+
 			}
 
 		}

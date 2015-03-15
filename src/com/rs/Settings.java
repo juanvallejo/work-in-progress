@@ -42,7 +42,7 @@ public final class Settings {
 	/**
 	 * Updating The Login "Latest Update" Message, Via Command.
 	 */
-	public static String recentUpdate = "WARNING: All items are now dropped on death!";
+	public static String recentUpdate = "WARNING: Only three items are now kept on death!";
 	
 	/**
 	 * Link settings
