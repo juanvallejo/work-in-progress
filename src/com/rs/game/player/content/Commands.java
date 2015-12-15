@@ -3935,7 +3935,7 @@ return false;
 				player.getPackets().sendIComponentText(1245, 18, "::changepass (newpassword) ::altars  ::yell  ::ape ::toggleupdate");
 				player.getPackets().sendIComponentText(1245, 19, "::dung  ::abyss  ::smith  ::resetdef ::farm ::treefarm");
 				player.getPackets().sendIComponentText(1245, 20, "::bork ::demonic ::blink ::white ::worms");
-				player.getPackets().sendIComponentText(1245, 21, "::graveyard");
+				player.getPackets().sendIComponentText(1245, 21, "::graveyard ::tds (Tormented Demons)");
 				player.getPackets().sendIComponentText(1245, 22, "<u>Addidional Commands");
 				player.getPackets().sendIComponentText(1245, 23, "::answer or ::trivia to answer to trivia questions!");
 				// donator commands
