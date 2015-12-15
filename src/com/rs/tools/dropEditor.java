@@ -636,15 +636,22 @@ public class dropEditor extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
  
     private void loadDrop(final int npcId) {
+
         npcIdLabel.setText(Integer.toString(npcId) + " " + NPCDefinitions.getNPCDefinitions(npcId).name);
+
         ArrayList<Drop> drops = loader.getDropArray().get(npcId);
         DefaultTableModel model = new DefaultTableModel();
+
+        // listen for table cell changes
         model.addTableModelListener(new TableModelListener() {
- 
             public void tableChanged(TableModelEvent e) {
+
                 try {
+
                     if (e.getColumn() != -1) {
+
                         if (dropTable.getValueAt(dropTable.getSelectedRow(), 0).equals("Rare")) {
+
                             loader.getDropArray().get(npcId).get(dropTable.getSelectedRow()).setItemId((short) -1);
                             loader.getDropArray().get(npcId).get(dropTable.getSelectedRow()).setRate(-1);
                             //String amount = (String) dropTable.getValueAt(dropTable.getSelectedRow(), 2);
@@ -652,9 +659,13 @@ public class dropEditor extends javax.swing.JFrame {
                             loader.getDropArray().get(npcId).get(dropTable.getSelectedRow()).setMaxAmount(1);
  
                         } else {
+
+                            // update 
                             loader.getDropArray().get(npcId).get(dropTable.getSelectedRow()).setItemId(Short.parseShort((String) dropTable.getValueAt(dropTable.getSelectedRow(), 0).toString()));
                             loader.getDropArray().get(npcId).get(dropTable.getSelectedRow()).setRate(Double.parseDouble((String) dropTable.getValueAt(dropTable.getSelectedRow(), 1).toString()));
+                            
                             String amount = (String) dropTable.getValueAt(dropTable.getSelectedRow(), 2);
+
                             if (amount.contains("-")) {
                                 loader.getDropArray().get(npcId).get(dropTable.getSelectedRow()).setMinAmount(Integer.parseInt(amount.substring(0, amount.indexOf("-"))));
                                 loader.getDropArray().get(npcId).get(dropTable.getSelectedRow()).setMaxAmount(Integer.parseInt(amount.substring(amount.indexOf("-") + 1)));
@@ -664,10 +675,13 @@ public class dropEditor extends javax.swing.JFrame {
  
                             }
                         }
+
                     }
+
                 } catch (Exception f) {
                     f.printStackTrace();
                 }
+
             }
         });
         
@@ -706,33 +720,50 @@ public class dropEditor extends javax.swing.JFrame {
         dropTable.setModel(model);
     }
  
+    /**
+     * Repack collection of binary files
+     */
     private void packFile() {
-        try { // //drops.bin
+
+        try { // drops.bin
+
             RandomAccessFile raf = new RandomAccessFile("data/npcs/packedDrops.d", "rw");
             raf.writeShort(loader.getDropMap().size());
+
+            // iterate through each drop in the drop entry set
             for (Entry<Integer, ArrayList<Drop>> e : loader.getDropArray().entrySet()) {
+
                 raf.writeShort(e.getKey());
                 raf.writeShort(e.getValue().size());
+
                 for (Drop d : e.getValue()) {
  
                     raf.writeByte(d.isFromRareTable() ? 1 : 0);
+
                     if (!d.isFromRareTable()) {
+
                         int itemID = d.getItemId();
+
                         if (ItemDefinitions.getItemDefinitions(itemID).getName().equals("Coins")) {
                             itemID = 995;
                         }
+
                         raf.writeShort(itemID);
                         raf.writeDouble(d.getRate());
+
                         if (d.getMinAmount() > d.getMaxAmount()) {
                             int min = d.getMinAmount();
                             d.setMinAmount(d.getMaxAmount());
                             d.setMaxAmount(min);
                         }
+
                         raf.writeInt(d.getMinAmount());
                         raf.writeInt(d.getMaxAmount());
+
                     }
                 }
             }
+
             raf.close();
             Logger.getLogger(dropEditor.class.getName()).log(Level.INFO, "Repacked the drops.");
         } catch (IOException ex) {
