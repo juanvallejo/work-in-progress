@@ -1,0 +1,1 @@
+java -Xmx1024m -classpath "bin:bin/com/mysql/jdbc/*:lib/*:data/libs/*" com.rs.Launcher true false false

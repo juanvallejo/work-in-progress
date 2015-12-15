@@ -1,0 +1,1 @@
+javac -d bin -cp "data/libs/*" -sourcepath src src/com/rs/*.java src/com/rs/tools/*.java
