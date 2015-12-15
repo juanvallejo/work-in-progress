@@ -6,6 +6,8 @@ import com.rs.game.WorldTile;
 
 public final class Settings {
 
+	public static final String LINE_SEPARATOR = System.getProperty("line.separator");
+
 	/**
 	 * General client and server settings.
 	 */
@@ -42,7 +44,7 @@ public final class Settings {
 	/**
 	 * Updating The Login "Latest Update" Message, Via Command.
 	 */
-	public static String recentUpdate = "WARNING: Only three items are now kept on death!";
+	public static String recentUpdate = ("1) Abyssal Whip drops are more common drops now. " + LINE_SEPARATOR + "2) You can now teleport to Tormented Demons by typing ::tds. " + LINE_SEPARATOR + "3) You can now teleport to the Abyss by typing ::abyss. " + LINE_SEPARATOR + "4) There are no longer fences blocking the exit at ::home.");
 	
 	/**
 	 * Link settings
@@ -68,7 +70,6 @@ public final class Settings {
 	 * Graphical User Interface settings
 	 */
 	public static final String GUI_SIGN = Settings.SERVER_NAME;
-	public static final String LINE_SEPARATOR = System.getProperty("line.separator");
 	
 	/**
 	 * Player settings
