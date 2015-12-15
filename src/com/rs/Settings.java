@@ -31,7 +31,7 @@ public final class Settings {
 	 */
 
 	public static final String[] MODERATOR_NAMES = {
-		"SantiClaus"
+		"SantiVClaus"
 	};
 	
 	/**
@@ -67,7 +67,7 @@ public final class Settings {
 	/**
 	 * Graphical User Interface settings
 	 */
-	public static final String GUI_SIGN = "Matrix GUI";
+	public static final String GUI_SIGN = Settings.SERVER_NAME;
 	public static final String LINE_SEPARATOR = System.getProperty("line.separator");
 	
 	/**
