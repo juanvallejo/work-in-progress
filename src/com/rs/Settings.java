@@ -11,7 +11,7 @@ public final class Settings {
 	 */
 	public static final String SERVER_NAME = "Work In Progress";
 	public static final int PORT_ID = 43594;
-	public static final String LASTEST_UPDATE = "WARNING: All items (except three) are now dropped on death!";
+	public static final String LASTEST_UPDATE = "You can now teleport to Tormented Demons (::tds). Try your luck at Dragon Claws!";
 	public static final String CACHE_PATH = "data/cache/";
 	public static final int RECEIVE_DATA_LIMIT = 7500;
 	public static final int PACKET_SIZE_LIMIT = 7500;
