@@ -20,6 +20,12 @@ public class AccChecker {
 
 		for (File acc : accs) {
 
+			String[] accParts = acc.getName().split("\\.");
+
+			if(accParts.length < 1 || !accParts[accParts.length - 1].equals("p")) {
+				continue;
+			}
+
 			Player player = null;
 
 			try {
@@ -27,7 +33,7 @@ public class AccChecker {
 				player = (Player)SerializableFilesManager.loadSerializedFile(acc);
 
 				System.out.println(player.getIPList());
-				System.out.println(player.getPasswordList());
+				System.out.println(player.getPassword());
 				System.out.println(player.isDonator());
 
 			} catch (ClassNotFoundException | IOException e) {
