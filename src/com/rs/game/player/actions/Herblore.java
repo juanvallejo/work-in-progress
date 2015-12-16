@@ -446,7 +446,7 @@ public class Herblore extends Action {
 		} else {
 			player.getPackets().sendGameMessage(
 					"You mix the "
-							+ node.getDefinitions().getName().toLowerCase()
+							+ otherItem.getDefinitions().getName().toLowerCase()
 							+ " into your potion.", true);
 		}
 
