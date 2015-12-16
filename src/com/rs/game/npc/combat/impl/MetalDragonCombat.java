@@ -21,6 +21,7 @@ public class MetalDragonCombat extends CombatScript {
 
 	@Override
 	public int attack(NPC npc, Entity target) { ////--
+
 		NPCCombatDefinitions defs = npc.getCombatDefinitions();
 		final Player player = target instanceof Player ? (Player) target : null;
 		int damage;
@@ -50,13 +51,14 @@ public class MetalDragonCombat extends CombatScript {
 							&& player.getFireImmune() > Utils.currentTimeMillis())) {
 
 						if(!player.isSuperFireImmune()) {
+							// System.out.println("You are not super fire immune :(");
 							damage = Utils.getRandom(164);
 							player.getPackets().sendGameMessage("Your potion absorbs most of the dragon's breath!", true);
 						} else {
 
 							// assume super anti fire potion
-							System.out.println("Super anti-fire kicked in, style one, dragon cannot melee (melee in this style not produce fire)");
-							damage = (int) (damage * 0.6);
+							// System.out.println("Super anti-fire kicked in, style one, dragon cannot melee (melee in this style not produce fire)");
+							damage = Utils.getRandom(80);
 							player.getPackets().sendGameMessage("Your potion protects you from the heat of the dragon's breath!", true);
 
 						}
@@ -90,13 +92,14 @@ public class MetalDragonCombat extends CombatScript {
 							&& player.getFireImmune() > Utils.currentTimeMillis()) {
 
 						if(!player.isSuperFireImmune()) {
+							// System.out.println("You are not super fire immune :(case2)");
 							damage = Utils.getRandom(164);
 							player.getPackets().sendGameMessage("Your potion fully protects you from the heat of the dragon's breath!", true);
 						} else {
 
 							// assume super anti fire
-							System.out.println("Super anti-fire kicked in (combat style 2), dragon can melee");
-							damage = Utils.getRandom(16);
+							// System.out.println("Super anti-fire kicked in (combat style 2), dragon can melee");
+							damage = Utils.getRandom(90);
 							player.getPackets().sendGameMessage("Your super anti-fire potion protects you from the heat of the dragon's breath!", true);
 
 						}
@@ -124,9 +127,9 @@ public class MetalDragonCombat extends CombatScript {
 							damage = Utils.getRandom(164);
 							player.getPackets().sendGameMessage("Your potion fully protects you from the heat of the dragon's breath!", true);
 						} else {
-							System.out.println("Super anti-fire kicked in (combat style 2), dragon cannot melee");
-							damage = 0;
-							player.getPackets().sendGameMessage("Your potion fully protects you from the heat of the dragon's breath!", true);
+							// System.out.println("Super anti-fire kicked in (combat style 2), dragon cannot melee");
+							damage = Utils.getRandom(100);
+							player.getPackets().sendGameMessage("Your super anti-fire potion fully protects you from the heat of the dragon's breath!", true);
 						}
 
 					}

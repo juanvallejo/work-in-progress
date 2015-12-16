@@ -1,1 +1,1 @@
-javac -d bin -cp "data/libs/*" -sourcepath src src/com/rs/*.java src/com/rs/tools/*.java src/com/rs/utils/*.java
+javac -d bin -cp "data/libs/*" -sourcepath src src/com/rs/*.java src/com/rs/tools/*.java src/com/rs/utils/*.java src/com/rs/game/npc/combat/impl/*.java

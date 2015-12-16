@@ -66,7 +66,7 @@ public final class Pots {
 		OVERLOAD(new int[] { 15332, 15333, 15334, 15335 }, Effects.OVERLOAD),
 
 		ANTI_FIRE(new int[] { 2452, 2454, 2456, 2458 }, Effects.ANTI_FIRE),
-		
+
 		SUPER_ANTI_FIRE(new int[] { 15304, 15305, 15306, 15307 }, Effects.SUPER_ANTI_FIRE),
 
 		SUMMONING_POTION(new int[] { 12140, 12142, 12144, 12146 }, Effects.SUMMONING_POT),
@@ -729,7 +729,7 @@ public final class Pots {
 	}
 
 	public static boolean pot(Player player, Item item, int slot) {
-		System.out.println("Checking pot " + item.getId()); ////--
+		System.out.println("Checking pot " + item.getId());
 		Pot pot = getPot(item.getId());
 
 		if(pot == null) {
