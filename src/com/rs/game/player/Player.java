@@ -233,6 +233,7 @@ public class Player extends Entity {
 	private boolean forceNextMapLoadRefresh;
 	private long poisonImmune;
 	private long fireImmune;
+	private boolean superFireImmune;
 	private boolean killedQueenBlackDragon;
 	private int runeSpanPoints;
 
@@ -752,6 +753,7 @@ public class Player extends Entity {
 		potDelay = 0;
 		poisonImmune = 0;
 		fireImmune = 0;
+		superFireImmune = false;
 		castedVeng = false;
 		setRunEnergy(100);
 		appearence.generateAppearenceData();
@@ -4122,11 +4124,20 @@ public class Player extends Entity {
 	}
 
 	public void addFireImmune(long time) {
-		fireImmune = time + Utils.currentTimeMillis();
+		fireImmune = time + Utils.currentTimeMillis(); ////--
+	}
+
+	public void addSuperFireImmune(long time) {
+		superFireImmune = true;
+		addFireImmune(time);
 	}
 
 	public long getFireImmune() {
 		return fireImmune;
+	}
+
+	public boolean isSuperFireImmune() {
+		return superFireImmune;
 	}
 
 	@Override
