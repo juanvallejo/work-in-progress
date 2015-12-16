@@ -315,13 +315,13 @@ return false;
                     Integer.parseInt(cmd[3]));
             other.getSkills().set(skill, level);
             other.getSkills().setXp(skill, Skills.getXPForLevel(level));
-            other.getPackets().sendGameMessage("One of your skills:  "
-                    + other.getSkills().getLevel(skill)
-                    + " has been set to " + level + " from "
+            other.getPackets().sendGameMessage("One of your skills ("
+                    + Skills.SKILL_NAME[skill]
+                    + ") has been set to " + level + " by "
                     + player.getDisplayName() + ".");
-            player.getPackets().sendGameMessage("You have set the skill:  "
-                    + other.getSkills().getLevel(skill) + " to " + level
-                    + " for " + other.getDisplayName() + ".");
+            player.getPackets().sendGameMessage("You have set " + other.getDisplayName() + "'s "
+                    + Skills.SKILL_NAME[skill] + " level to " + level
+                    + ".");
             //}
             return true;
 			}
@@ -1184,10 +1184,10 @@ return false;
 				int amount = Integer.parseInt(cmd[3]);
 				other.getInventory().addItem(item, amount);
 				other.getPackets().sendGameMessage("You have received a "
-						+ ItemDefinitions.getItemDefinitions(item) + " from "
+						+ ItemDefinitions.getItemDefinitions(item).getName() + " from "
 						+ player.getDisplayName() + ".");
 				player.getPackets().sendGameMessage("You have given a "
-						+ ItemDefinitions.getItemDefinitions(item) + " to "
+						+ ItemDefinitions.getItemDefinitions(item).getName() + " to "
 						+ other.getDisplayName() + ".");
 
 			}
