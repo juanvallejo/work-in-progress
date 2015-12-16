@@ -163,7 +163,7 @@ public class NPCSpawning {
 		World.spawnObject(new WorldObject(170, 10, 3, 2892, 2717, 0), true);
 
 		// spawn home altar
-		World.spawnObject(new WorldObject(13190, 10, 0, 2407, 2845, 0), true);
+		World.spawnObject(new WorldObject(13190, 10, 0, 2407, 2844, 0), true);
 
 		World.deleteObject(new WorldTile(3691, 3469, 0));
 		World.deleteObject(new WorldTile(3694, 3468, 0));
