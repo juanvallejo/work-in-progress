@@ -729,7 +729,7 @@ public final class Pots {
 	}
 
 	public static boolean pot(Player player, Item item, int slot) {
-		System.out.println("Checking pot " + item.getId());
+
 		Pot pot = getPot(item.getId());
 
 		if(pot == null) {

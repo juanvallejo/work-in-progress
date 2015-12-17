@@ -7,7 +7,9 @@ import com.rs.game.World;
 import com.rs.game.npc.NPC;
 import com.rs.game.npc.combat.CombatScript;
 import com.rs.game.npc.combat.NPCCombatDefinitions;
+import com.rs.game.player.CombatDefinitions;
 import com.rs.game.player.Player;
+import com.rs.game.player.Skills;
 import com.rs.game.player.content.Combat;
 import com.rs.utils.Utils;
 
@@ -19,126 +21,156 @@ public class MetalDragonCombat extends CombatScript {
 				"Mithril dragon" };
 	}
 
-	@Override
-	public int attack(NPC npc, Entity target) { ////--
+	/**
+	 * Calculates magic damage on a player based on player's anti-fire defenses
+	 * and given damage modifiers. Will also output to player method of protection
+	 * if any.
+	 */
+	public int doMagicDamage(NPC npc, Entity target, double fullProtectMod, double partialProtectMod, boolean sendProjectile) {
 
-		NPCCombatDefinitions defs = npc.getCombatDefinitions();
-		final Player player = target instanceof Player ? (Player) target : null;
+		final Player player = target instanceof Player ? (Player)target : null;
+		int damage = Utils.getRandom(650);
+
+		// if player is null, simply send animation to dragon, ignore damage calculation
+		if(player == null) {
+
+			if(sendProjectile) {
+				npc.setNextAnimation(new Animation(13160));
+				World.sendProjectile(npc, target, 393, 28, 16, 35, 35, 16, 0);
+			} else {
+				npc.setNextAnimation(new Animation(13164));
+				npc.setNextGraphics(new Graphics(2465));
+			}
+
+			delayHit(npc, 1, target, getRegularHit(npc, damage));
+
+			return damage;
+		}
+
+		// calculate probability of damage being applied
+		// it's good to have some zeroes on there
+		// use the npc's stab attack since it is the only
+		// combat style defined for now
+		int[] npcBonuses = npc.getBonuses();
+		double chanceOfAttack = npcBonuses[CombatDefinitions.STAB_ATTACK];
+		double chanceOfDefence = (player.getSkills().getLevel(Skills.DEFENCE) + (2 * player.getCombatDefinitions().getBonuses()[CombatDefinitions.STAB_DEF])) * player.getPrayer().getDefenceMultiplier();
+		double chanceOfDamage = chanceOfAttack / chanceOfDefence;
+
+		if(chanceOfDamage > 0.90) {
+			chanceOfDamage = 0.90;
+		} else if(chanceOfDamage < 0.05) {
+			chanceOfDamage = 0.05;
+		}
+
+		if(chanceOfDamage < Math.random()) {
+			return 0;
+		}
+
+		// if player has combination of potion and prayer or potion and anti-fire armour,
+		// or just super anti-fire potion, reduce damage by 70%
+		if((player.getFireImmune() > Utils.currentTimeMillis() && player.isSuperFireImmune())
+			|| (Combat.hasAntiDragProtection(target) && player.getFireImmune() > Utils.currentTimeMillis())
+			|| (player.getFireImmune() > Utils.currentTimeMillis() && (player.getPrayer().usingPrayer(0, 17) || player.getPrayer().usingPrayer(1, 7)))) {
+
+			damage = (int)(damage * fullProtectMod);
+
+			// decrease more damage if using super anti-fire potion
+			if(player.isSuperFireImmune()) {
+				player.getPackets().sendGameMessage("Your super anti-fire potion absorbs a large amount of the dragon's breath!", true);
+			} else {
+
+				String fireProtectMethod = "shield";
+
+				if(player.getFireImmune() > Utils.currentTimeMillis()) {
+					player.getPackets().sendGameMessage("Your potion absorbs some of the dragon's breath!", true);
+				} else if(!Combat.hasAntiDragProtection(target)) {
+					fireProtectMethod = "prayer";
+				}
+
+				player.getPackets().sendGameMessage("Your " + fireProtectMethod + " absorbs most of the dragon's breath!", true);
+
+			}
+
+		// if player is using an antifire potion, fire-protection armour, or any magic prayer
+		// decrease fire damage slightly (-40% with potion, -30% with armour or prayer).
+		} else if((player.getPrayer().usingPrayer(0, 17) || player.getPrayer().usingPrayer(1, 7))
+			|| Combat.hasAntiDragProtection(target)
+			|| player.getFireImmune() > Utils.currentTimeMillis()) {
+
+			damage = (int)(damage * partialProtectMod);
+
+			// if player has no anti-fire potion, but is using a combination of
+			// both anti-fire armour and protect from magic prayer, give no added bonus
+			if(player.getFireImmune() > Utils.currentTimeMillis()) {
+				player.getPackets().sendGameMessage("Your potion absorbs some of the dragon's breath!", true);
+			} else {
+
+				String fireProtectMethod = "prayer";
+
+				if(Combat.hasAntiDragProtection(target)) {
+					fireProtectMethod = "shield";
+				}
+
+				player.getPackets().sendGameMessage("Your " + fireProtectMethod + " absorbs most of the dragon's breath!", true);
+			}
+
+		}
+
+		if(sendProjectile) {
+			npc.setNextAnimation(new Animation(13160));
+			World.sendProjectile(npc, target, 393, 28, 16, 35, 35, 16, 0);
+		} else {
+			npc.setNextAnimation(new Animation(13164));
+			npc.setNextGraphics(new Graphics(2465));
+		}
+
+		delayHit(npc, 1, target, getRegularHit(npc, damage));
+
+		return damage;
+
+	}
+
+	@Override
+	public int attack(NPC npc, Entity target) {
+
+		NPCCombatDefinitions defs 	= npc.getCombatDefinitions();
+		final Player player 		= target instanceof Player ? (Player) target : null;
+
 		int damage;
-		switch (Utils.getRandom(1)) {
+
+		switch(Utils.getRandom(1)) {
+
 			case 0:
-				if (npc.withinDistance(target, 3)) {
+
+				// if npc is within 3 tiles of player, use melee attack and animation
+				if(npc.withinDistance(target, 3)) {
+
 					damage = getRandomMaxHit(npc, defs.getMaxHit(), NPCCombatDefinitions.MELEE, target);
 					npc.setNextAnimation(new Animation(defs.getAttackEmote()));
+
 					delayHit(npc, 0, target, getMeleeHit(npc, damage));
+
 				} else {
-					damage = Utils.getRandom(650);
-					if (Combat.hasAntiDragProtection(target)
-							|| (player != null && (player.getPrayer().usingPrayer(
-									0, 17) || player.getPrayer().usingPrayer(1, 7)))) {
-						damage = (int) (damage * 0.6);
-						player.getPackets()
-								.sendGameMessage(
-										"Your "
-												+ (Combat
-														.hasAntiDragProtection(target) ? "shield"
-														: "prayer")
-												+ " absorbs most of the dragon's breath!",
-										true);
-					} else if (player != null && ((!Combat.hasAntiDragProtection(target)
-							|| !player.getPrayer().usingPrayer(0, 17) || !player
-							.getPrayer().usingPrayer(1, 7))
-							&& player.getFireImmune() > Utils.currentTimeMillis())) {
-
-						if(!player.isSuperFireImmune()) {
-							// System.out.println("You are not super fire immune :(");
-							damage = Utils.getRandom(164);
-							player.getPackets().sendGameMessage("Your potion absorbs most of the dragon's breath!", true);
-						} else {
-
-							// assume super anti fire potion
-							// System.out.println("Super anti-fire kicked in, style one, dragon cannot melee (melee in this style not produce fire)");
-							damage = Utils.getRandom(80);
-							player.getPackets().sendGameMessage("Your potion protects you from the heat of the dragon's breath!", true);
-
-						}
-					}
-					npc.setNextAnimation(new Animation(13160));
-					World.sendProjectile(npc, target, 393, 28, 16, 35, 35, 16, 0);
-					delayHit(npc, 1, target, getRegularHit(npc, damage));
+					damage = doMagicDamage(npc, target, 0.1, 0.4, true);
 				}
+
 				break;
 
 			case 1:
 
+				// in this attack style, even if npc is within 3 tiles of player,
+				// npc will send projectile to player
 				if (npc.withinDistance(target, 3)) {
-					damage = Utils.getRandom(650);
-					if (Combat.hasAntiDragProtection(target)
-							|| (player != null && (player.getPrayer().usingPrayer(
-									0, 17) || player.getPrayer().usingPrayer(1, 7)))) {
-						damage = (int) (damage * 0.6);
-						if(player != null)
-						player.getPackets()
-								.sendGameMessage(
-										"Your "
-												+ (Combat
-														.hasAntiDragProtection(target) ? "shield"
-														: "prayer")
-												+ " absorbs most of the dragon's breath!",
-										true);
-					} else if (player != null && ((!Combat.hasAntiDragProtection(target)
-							|| !player.getPrayer().usingPrayer(0, 17) || !player
-							.getPrayer().usingPrayer(1, 7)))
-							&& player.getFireImmune() > Utils.currentTimeMillis()) {
 
-						if(!player.isSuperFireImmune()) {
-							// System.out.println("You are not super fire immune :(case2)");
-							damage = Utils.getRandom(164);
-							player.getPackets().sendGameMessage("Your potion fully protects you from the heat of the dragon's breath!", true);
-						} else {
-
-							// assume super anti fire
-							// System.out.println("Super anti-fire kicked in (combat style 2), dragon can melee");
-							damage = Utils.getRandom(90);
-							player.getPackets().sendGameMessage("Your super anti-fire potion protects you from the heat of the dragon's breath!", true);
-
-						}
-					}
-					npc.setNextAnimation(new Animation(13164));
-					npc.setNextGraphics(new Graphics(2465));
-					delayHit(npc, 1, target, getRegularHit(npc, damage));
+					damage = doMagicDamage(npc, target, 0.2, 0.4, false);
 
 				} else {
-
-					damage = Utils.getRandom(650);
-					if (Combat.hasAntiDragProtection(target)
-							|| (player != null && (player.getPrayer().usingPrayer(
-									0, 17) || player.getPrayer().usingPrayer(1, 7)))) {
-						damage = 0;
-						
-						if(player != null) {
-							player.getPackets().sendGameMessage("Your " + (Combat.hasAntiDragProtection(target) ? "shield" : "prayer") + " absorbs most of the dragon's breath!", true);
-						}
-
-					} else if (player != null && ((!Combat.hasAntiDragProtection(target) || !player.getPrayer().usingPrayer(0, 17) || !player.getPrayer().usingPrayer(1, 7)))
-							&& player.getFireImmune() > Utils.currentTimeMillis()) {
-						
-						if(!player.isSuperFireImmune()) {
-							damage = Utils.getRandom(164);
-							player.getPackets().sendGameMessage("Your potion fully protects you from the heat of the dragon's breath!", true);
-						} else {
-							// System.out.println("Super anti-fire kicked in (combat style 2), dragon cannot melee");
-							damage = Utils.getRandom(100);
-							player.getPackets().sendGameMessage("Your super anti-fire potion fully protects you from the heat of the dragon's breath!", true);
-						}
-
-					}
-					npc.setNextAnimation(new Animation(13160));
-					World.sendProjectile(npc, target, 393, 28, 16, 35, 35, 16, 0);
-					delayHit(npc, 1, target, getRegularHit(npc, damage));
+					damage = doMagicDamage(npc, target, 0.2, 0.4, true);
 				}
+
 				break;
 		}
+
 		return defs.getAttackDelay();
 	}
 
