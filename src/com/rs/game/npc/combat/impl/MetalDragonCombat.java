@@ -23,8 +23,8 @@ public class MetalDragonCombat extends CombatScript {
 
 	/**
 	 * Calculates magic damage on a player based on player's anti-fire defenses
-	 * and given damage modifiers. Will also output to player method of protection
-	 * if any.
+	 * and given damage modifiers. Will also output to player method of protection if any.
+	 * Total computed damage is influenced by a player's prayer and armour bonuses
 	 */
 	public int doMagicDamage(NPC npc, Entity target, double fullProtectMod, double partialProtectMod, boolean sendProjectile) {
 
@@ -50,19 +50,22 @@ public class MetalDragonCombat extends CombatScript {
 		// calculate probability of damage being applied
 		// it's good to have some zeroes on there
 		// use the npc's stab attack since it is the only
-		// combat style defined for now
+		// combat style defined for now. Defence is taken from
+		// the player's total magic defence bonuses
 		int[] npcBonuses = npc.getBonuses();
-		double chanceOfAttack = npcBonuses[CombatDefinitions.STAB_ATTACK];
-		double chanceOfDefence = (player.getSkills().getLevel(Skills.DEFENCE) + (2 * player.getCombatDefinitions().getBonuses()[CombatDefinitions.STAB_DEF])) * player.getPrayer().getDefenceMultiplier();
+		double chanceOfAttack = npcBonuses[CombatDefinitions.STAB_ATTACK] / 10.0;
+		double chanceOfDefence = (player.getSkills().getLevel(Skills.MAGIC) + (2 * player.getCombatDefinitions().getBonuses()[CombatDefinitions.MAGIC_DEF])) * player.getPrayer().getMageMultiplier();
 		double chanceOfDamage = chanceOfAttack / chanceOfDefence;
 
-		if(chanceOfDamage > 0.90) {
-			chanceOfDamage = 0.90;
+		// chance gets smaller as player's defence
+		// increases
+		if(chanceOfDamage >= 0.90) {
+			chanceOfDamage = 0.80;
 		} else if(chanceOfDamage < 0.05) {
 			chanceOfDamage = 0.05;
 		}
 
-		if(chanceOfDamage < Math.random()) {
+		if((chanceOfDamage) < Math.random()) {
 			return 0;
 		}
 
@@ -126,7 +129,10 @@ public class MetalDragonCombat extends CombatScript {
 
 		delayHit(npc, 1, target, getRegularHit(npc, damage));
 
-		return damage;
+		// reduce damage according to player's protection bonuses
+		damage /= (chanceOfDefence > 1.0 ? (1 - ((chanceOfDefence / 100) / 3)) : 1);
+
+		return (int)damage;
 
 	}
 
