@@ -13,7 +13,7 @@ public final class Settings {
 	 */
 	public static final String SERVER_NAME = "Work In Progress";
 	public static final int PORT_ID = 43594;
-	public static final String LASTEST_UPDATE = "The super anti-fire potion can now be consumed. Saradomin Brews can now be made.";
+	public static final String LASTEST_UPDATE = "You can now use high and low-level alchemy!";
 	public static final String CACHE_PATH = "data/cache/";
 	public static final int RECEIVE_DATA_LIMIT = 7500;
 	public static final int PACKET_SIZE_LIMIT = 7500;
@@ -44,7 +44,7 @@ public final class Settings {
 	/**
 	 * Updating The Login "Latest Update" Message, Via Command.
 	 */
-	public static String recentUpdate = ("1) Abyssal Whip drops are more common drops now. " + LINE_SEPARATOR + "2) You can now teleport to Tormented Demons by typing ::tds. " + LINE_SEPARATOR + "3) You can now teleport to the Abyss by typing ::abyss. " + LINE_SEPARATOR + "4) There are no longer fences blocking the exit at ::home.");
+	public static String recentUpdate = ("You can now cast high and low-level alchemy on items.");
 	
 	/**
 	 * Link settings
