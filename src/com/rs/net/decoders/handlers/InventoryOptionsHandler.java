@@ -60,6 +60,8 @@ import com.rs.io.InputStream;
 import com.rs.utils.Logger;
 import com.rs.utils.Utils;
 
+import com.rs.game.player.content.Shop;
+
 public class InventoryOptionsHandler {
 	
 	public static boolean canOpen(Player player){
@@ -487,6 +489,7 @@ return;
 		int itemUsedId = stream.readShortLE128();
 		int itemId = stream.readShort128();
 
+		// handle high and low-level alchemy
 		if (interfaceId == 192 && interfaceId2 == 679) {
 
 			if (comp1 == 59) {
@@ -510,7 +513,7 @@ return;
 					return;
 				}
 
-				if(player.getEquipment().getWeaponId() == 1387) {
+				if(player.getEquipment().getWeaponId() == 1387 || player.getEquipment().getWeaponId() == 1393) {
 					hasFireStaff = true;
 				}
 
@@ -551,7 +554,7 @@ return;
 							player.getInventory().deleteItem(554, 5);
 						}
 
-						player.getInventory().addItem(995, def.getValue());
+						player.getInventory().addItem(995, ((int)(Shop.getBuyPrice(new Item(itemUsedWithId), 0) / 2.0)));
 						player.getSkills().addXp(Skills.MAGIC, 10); //2790 -> 9 3100 -> 10
 
 						break;
@@ -562,7 +565,7 @@ return;
 							player.getInventory().deleteItem(554, 3);
 						}
 
-						player.getInventory().addItem(995, ((int)(def.getValue() / 2.0)));
+						player.getInventory().addItem(995, ((int)(Shop.getBuyPrice(new Item(itemUsedWithId), 0) / 4.0)));
 						player.getSkills().addXp(Skills.MAGIC, 8);
 
 						break;
