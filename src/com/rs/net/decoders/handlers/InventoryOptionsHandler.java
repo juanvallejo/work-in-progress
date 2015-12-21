@@ -475,40 +475,102 @@ return;
 	}
 
 	public static void handleItemOnItem(final Player player, InputStream stream) {
+
 		int itemUsedWithId = stream.readShort();
 		int toSlot = stream.readShortLE128();
-		int interfaceId = stream.readInt() >> 16;
-		int interfaceId2 = stream.readInt() >> 16;
+		int hash1 = stream.readInt();
+		int hash2 = stream.readInt();
+		int interfaceId = hash1 >> 16;
+		int interfaceId2 = hash2 >> 16;
+		int comp1 = hash1 & 0xFFFF;
 		int fromSlot = stream.readShort();
 		int itemUsedId = stream.readShortLE128();
 		int itemId = stream.readShort128();
 
-		
-		/*if (interfaceId == 192 && interfaceId == 679) {
+		if (interfaceId == 192 && interfaceId2 == 679) {
+
 			if (comp1 == 59) {
 				player.setAlchType(AlchType.HIGH);
 			} else if (comp1 == 38) {
 				player.setAlchType(AlchType.LOW);
 			}
+
 			if (player.getAlchType() != null) {
+
+				boolean hasFireStaff = false;
 				Item itemToAlch = player.getInventory().getItem(toSlot);
-				if (itemToAlch == null)
+
+				if (itemToAlch == null) {
 					return;
-				ItemDefinitions def = ItemDefinitions.forId(itemToAlch.getId());
-				if (def == null)
-					return;
-				switch(player.getAlchType()) {
-				case HIGH:
-					if (itemToAlch.getId() == 1045) {
-					player.out("High");
-					}
-					break;
-				case LOW:
-					player.out("Low");
-					break;
 				}
+
+				ItemDefinitions def = ItemDefinitions.forId(itemToAlch.getId());
+
+				if (def == null) {
+					return;
+				}
+
+				if(player.getEquipment().getWeaponId() == 1387) {
+					hasFireStaff = true;
+				}
+
+				// check for appropriate level
+				if((comp1 == 59 && player.getSkills().getLevel(Skills.MAGIC) < 55) || (comp1 == 38 && player.getSkills().getLevel(Skills.MAGIC) < 21)) {
+					player.getPackets().sendGameMessage("You do not have the required level to cast this spell.");
+					return;
+				}
+
+				// check for appropriate runes
+				if(!player.getInventory().containsItem(561, 1) || (!player.getInventory().containsItem(554, 5) && !hasFireStaff)) {
+					player.getPackets().sendGameMessage("You do not have the required runes to cast this spell.");
+					return;
+				}
+
+				// check to see if alching gp
+				if(itemUsedWithId == 995) {
+					player.getPackets().sendGameMessage("Nothing interesting happens.");
+					return;
+				}
+
+				// delete nature rune
+				player.getInventory().deleteItem(561, 1);
+
+				// delete high alched item
+				player.getInventory().deleteItem(itemUsedWithId, 1);
+
+				// send animation
+				player.setNextAnimation(new Animation(713));
+				player.setNextGraphics(new Graphics(113));
+
+				switch(player.getAlchType()) {
+
+					case HIGH:
+
+						// delete 5 fire runes
+						if(!hasFireStaff) {
+							player.getInventory().deleteItem(554, 5);
+						}
+
+						player.getInventory().addItem(995, def.getValue());
+						player.getSkills().addXp(Skills.MAGIC, 10); //2790 -> 9 3100 -> 10
+
+						break;
+					case LOW:
+
+						// delete 3 fire runes
+						if(!hasFireStaff) {
+							player.getInventory().deleteItem(554, 3);
+						}
+
+						player.getInventory().addItem(995, ((int)(def.getValue() / 2.0)));
+						player.getSkills().addXp(Skills.MAGIC, 8);
+
+						break;
+
+				}
+
 			}
-		}*/
+		}
 		
 		if ((interfaceId2 == 747 || interfaceId2 == 662)
 				&& interfaceId == Inventory.INVENTORY_INTERFACE) {
