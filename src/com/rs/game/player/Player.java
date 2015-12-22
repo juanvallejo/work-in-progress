@@ -1077,7 +1077,7 @@ public class Player extends Entity {
 				getPackets().sendIComponentText(275, 18, "");
 				getPackets().sendIComponentText(275, 19, "");
 				getPackets().sendIComponentText(275, 20, "");
-				getSkills().addXp(Skills.DUNGEONEERING, 500000);
+				getSkills().addXp(Skills.DUNGEONEERING, 1600);
 				lostCity = 1;
 			}
 		}
