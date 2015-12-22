@@ -33,7 +33,7 @@ public final class Settings {
 	 */
 
 	public static final String[] MODERATOR_NAMES = {
-		"Juan"
+		"Santivclaus"
 	};
 	
 	/**
