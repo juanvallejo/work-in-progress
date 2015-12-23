@@ -347,7 +347,7 @@ return;
 			player.getPackets().sendIComponentText(275, 16,
 					"Welcome to " + Settings.SERVER_NAME + ".");
 			player.getPackets().sendIComponentText(275, 17,
-					"If want some an item use command ::item id.");
+					"If want an item use command ::item id.");
 			player.getPackets().sendIComponentText(275, 18,
 					"If you don't have an item list you can find ids");
 			player.getPackets().sendIComponentText(275, 19,
@@ -571,6 +571,19 @@ return;
 						break;
 
 				}
+
+				WorldTasksManager.schedule(new WorldTask() {
+
+					@Override
+					public void run() {
+
+						// switch back to modern magics interface
+						player.getInterfaceManager().openGameTab(7);
+						stop();
+
+					}
+
+				}, 1, 0);
 
 			}
 		}
