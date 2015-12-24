@@ -13,7 +13,7 @@ public final class Settings {
 	 */
 	public static final String SERVER_NAME = "Work In Progress";
 	public static final int PORT_ID = 43594;
-	public static final String LASTEST_UPDATE = "You can now use high and low-level alchemy!";
+	public static final String LASTEST_UPDATE = "Join us on our music channel https://www.dubtrack.fm/join/iwannabeinyourass";
 	public static final String CACHE_PATH = "data/cache/";
 	public static final int RECEIVE_DATA_LIMIT = 7500;
 	public static final int PACKET_SIZE_LIMIT = 7500;
