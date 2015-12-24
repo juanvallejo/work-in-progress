@@ -382,6 +382,7 @@ public class Herblore extends Action {
 
 	@Override
 	public boolean process(Player player) {
+
 		if (ingredients == Ingredients.TORSTOL && otherItem.getId() != VIAL) {
 			if (!player.getInventory().containsOneItem(15309)
 					|| !player.getInventory().containsOneItem(15313)
@@ -395,11 +396,15 @@ public class Herblore extends Action {
 						otherItem.getAmount())) {
 			return false;
 		}
+
 		return true;
 	}
 
 	@Override
 	public int processWithDelay(Player player) {
+		
+		boolean isNodeAlreadyDeleted = false;
+
 		if (node.getId() == PESTLE_AND_MORTAR
 				|| otherItem.getId() == PESTLE_AND_MORTAR) {
 			player.setNextAnimation(new Animation(364));
@@ -434,15 +439,22 @@ public class Herblore extends Action {
 					"You crush the "
 							+ node.getDefinitions().getName().toLowerCase()
 							+ " with your pestle and mortar.", true);
-		} else if (ingredients == Ingredients.TORSTOL
-				&& otherItem.getId() != VIAL) {
-			player.getPackets()
-			.sendGameMessage(
-					"You combine the torstol with the potions and get an overload.");
-			if (player.getInventory().removeItems(new Item(node.getId()),
-					new Item(15309), new Item(15313), new Item(15317),
-					new Item(15321), new Item(15325))) {
-			}
+		} else if (ingredients == Ingredients.TORSTOL && otherItem.getId() != VIAL) {
+
+			player.getPackets().sendGameMessage("You combine the torstol with the potions and get an overload.");
+
+			// delete torstol herb
+			player.getInventory().deleteItem(269, 1);
+
+			// delete extreme potions
+			player.getInventory().deleteItem(15309, 1);
+			player.getInventory().deleteItem(15313, 1);
+			player.getInventory().deleteItem(15317, 1);
+			player.getInventory().deleteItem(15321, 1);
+			player.getInventory().deleteItem(15325, 1);
+
+			isNodeAlreadyDeleted = true;
+
 		} else {
 			player.getPackets().sendGameMessage(
 					"You mix the "
@@ -450,16 +462,18 @@ public class Herblore extends Action {
 							+ " into your potion.", true);
 		}
 
-		player.getInventory().removeItems(new Item(node.getId(), 1),
-				rawIngredient == null ? new Item(otherItem.getId(), 1) : null);
-		player.getInventory().addItem(
-				rawIngredient != null ? rawIngredient.getCrushedItem()
-						: new Item(ingredients.getRewards()[slot], 1));
-		player.getSkills().addXp(Skills.HERBLORE,
-				rawIngredient != null ? 0 : ingredients.getExperience()[slot]);
+		if(!isNodeAlreadyDeleted) {
+			player.getInventory().removeItems(new Item(node.getId(), 1), rawIngredient == null ? new Item(otherItem.getId(), 1) : null);
+		}
+
+		player.getInventory().addItem(rawIngredient != null ? rawIngredient.getCrushedItem() : new Item(ingredients.getRewards()[slot], 1));
+		
+		player.getSkills().addXp(Skills.HERBLORE, rawIngredient != null ? 0 : ingredients.getExperience()[slot]);
+		
 		if (ticks > 0) {
 			return 1;
 		}
+
 		return -1;
 	}
 

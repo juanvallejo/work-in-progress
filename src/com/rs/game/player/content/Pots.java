@@ -803,6 +803,8 @@ public final class Pots {
 		boolean combinationExists = false;
 		int[] potionAmountIds = null;
 
+		int emptyVialId = 229;
+
 		for(Pot pot : Pot.values()) {
 
 			boolean itemUsedExists = false;
@@ -818,7 +820,7 @@ public final class Pots {
 				}
 			}
 
-			if(itemUsedExists && itemUsedWithExists) {
+			if(itemUsedExists && (itemUsedWithExists || idUsedWith == emptyVialId)) {
 				combinationExists = true;
 				potionAmountIds = pot.getIds();
 			}
@@ -877,6 +879,25 @@ public final class Pots {
 			itemUsedWithAmount = 1;
 		}
 
+		// handle potion being poured into empty container
+		// TODO
+		if(idUsedWith == emptyVialId) {
+
+			// determine if even number of doses being used
+			// on empty vial
+			if(itemUsedAmount % 2 == 0) {
+
+				player.getInventory().deleteItem(idUsedWith, 1);
+				player.getInventory().deleteItem(idUsed, 1);
+
+				player.getInventory().addItem(potionAmountIds[maxPotionDoseAmount - (itemUsedAmount / 2)], 2);
+
+				return true;
+			}
+
+			return false;
+		}
+
 		// amount of doses potion being poured into
 		// already contains
 		int baseAmountItemUsedWith = itemUsedWithAmount + itemUsedAmount;
@@ -906,7 +927,7 @@ public final class Pots {
 			if(isFlask) {
 				player.getPackets().sendGameMessage("Your empty flask shatters to pieces.");
 			} else {
-				player.getInventory().addItem(229, 1);
+				player.getInventory().addItem(emptyVialId, 1);
 			}
 
 		} else {

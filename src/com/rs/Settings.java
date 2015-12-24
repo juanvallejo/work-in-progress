@@ -44,7 +44,7 @@ public final class Settings {
 	/**
 	 * Updating The Login "Latest Update" Message, Via Command.
 	 */
-	public static String recentUpdate = ("You can now cast high and low-level alchemy on items.");
+	public static String recentUpdate = ("1) Overloads will now use exactly one of each item needed for its recipe. 2) You can now mix a full potion with an empty vial to split it in half. 3) Blink has drops enabled, it will also have a chance of dropping infinity robe pieces.");
 	
 	/**
 	 * Link settings
