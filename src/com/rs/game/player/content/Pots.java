@@ -210,6 +210,10 @@ public final class Pots {
 		private int[] id;
 		private Effects effect;
 
+		public int[] getIds() {
+			return this.id;
+		}
+
 		private Pot(int[] id, Effects effect) {
 			this.id = id;
 			this.effect = effect;
@@ -791,6 +795,10 @@ public final class Pots {
 	}
 
 	public static boolean mixPotion(Player player, int usedSlot, int withSlot) {
+		return true;
+	}
+
+	public static boolean mixPotion(Player player, int usedSlot, int withSlot, int idUsed, int idUsedWith) {
 		/*Item itemUsed = player.getInventory().getItem(usedSlot);
 		Item usedWith = player.getInventory().getItem(withSlot);
 		Pot first = getPot(itemUsed.getId());
@@ -805,7 +813,100 @@ public final class Pots {
 			return false;
 		} else if (itemUsed.getId() == 229)// empty vial
 			return false;*/
+
+		boolean combinationExists = false;
+		int[] potionAmountIds = null;
+
+		for(Pot pot : Pot.values()) {
+
+			boolean itemUsedExists = false;
+			boolean itemUsedWithExists = false;
+
+			for(int i = 0; i < pot.getIds().length; i++) {
+				if(idUsedWith == pot.getIds()[i]) {
+					itemUsedWithExists = true;
+				}
+
+				if(idUsed == pot.getIds()[i]) {
+					itemUsedExists = true;
+				}
+			}
+
+			if(itemUsedExists && itemUsedWithExists) {
+				combinationExists = true;
+				potionAmountIds = pot.getIds();
+			}
+
+		}
+
+		// check to see if two potions used are
+		// of them same kind, then combine
+		if(!combinationExists || potionAmountIds == null) {
+			return false;
+		}
+
+		Item itemUsedWith = player.getInventory().getItem(withSlot);
+		Item itemUsed = player.getInventory().getItem(usedSlot);
+
+		String itemUsedWithName = itemUsedWith.getDefinitions().getName();
+		String itemUsedName = itemUsed.getDefinitions().getName();
+
+		if(itemUsedWithName == null || itemUsedName == null) {
+			return false;
+		}
+
+		if(itemUsedWithName.contains("4")) {
+			player.getPackets().sendGameMessage("That potion is already full.");
+			return true;
+		}
+
+		int itemUsedAmount = 3;
+		int itemUsedWithAmount = 3;
+
+		if(itemUsedName.contains("2")) {
+			itemUsedAmount = 2;
+		} else if(itemUsedName.contains("1")) {
+			itemUsedAmount = 1;
+		}
+
+		if(itemUsedWithName.contains("2")) {
+			itemUsedWithAmount = 2;
+		} else if(itemUsedWithName.contains("1")) {
+			itemUsedWithAmount = 1;
+		}
+
+		// amount of doses potion being poured into
+		// already contains
+		int baseAmountItemUsedWith = itemUsedWithAmount + itemUsedAmount;
+
+		// how much the potion used to fill
+		// the new one should have left
+		int remainderItemUsed = itemUsedAmount;
+
+		if(baseAmountItemUsedWith >= 4) {
+			remainderItemUsed = baseAmountItemUsedWith % 4;
+			baseAmountItemUsedWith = 4;
+		}
+
+		if(itemUsedWithAmount + itemUsedAmount < 4) {
+			remainderItemUsed = 0;
+		}
+
+		// so far so good, remove itemUsedWith
+		player.getInventory().deleteItem(idUsedWith, 1);
+		player.getInventory().deleteItem(idUsed, 1);
+
+		player.getInventory().addItem(potionAmountIds[4 - baseAmountItemUsedWith], 1);
+
+		// if used potion had one dose left, replace with empty vial
+		if(remainderItemUsed == 0) {
+			player.getInventory().addItem(229, 1);
+		} else {
+			player.getInventory().addItem(potionAmountIds[4 - remainderItemUsed], 1);	
+		}
+
 		return true;
+
 	}
 
 	public static void resetOverLoadEffect(Player player) {

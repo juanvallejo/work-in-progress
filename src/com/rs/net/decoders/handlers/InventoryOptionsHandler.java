@@ -586,6 +586,8 @@ return;
 				}, 1, 0);
 
 			}
+
+			return;
 		}
 		
 		if ((interfaceId2 == 747 || interfaceId2 == 662)
@@ -679,10 +681,12 @@ return;
 					|| itemUsed.getId() != itemUsedId
 					|| usedWith.getId() != itemUsedWithId)
 				return;
+
 			player.stopAll();
 			if (!player.getControlerManager().canUseItemOnItem(itemUsed,
 					usedWith))
-				return;
+				return;			
+
 			Fletch fletch = Fletching.isFletching(usedWith, itemUsed);
 			if (fletch != null) {
 				player.getDialogueManager().startDialogue("FletchingD", fletch);
@@ -702,6 +706,7 @@ return;
 						herblore, itemUsed, usedWith);
 				return;
 			}
+
 			if (itemUsed.getId() == LeatherCrafting.NEEDLE.getId()
 					|| usedWith.getId() == LeatherCrafting.NEEDLE.getId()) {
 				if (LeatherCrafting
@@ -709,39 +714,75 @@ return;
 					return;
 				}
 			}
+
 			Sets set = ArmourSets.getArmourSet(itemUsedId, itemUsedWithId);
+
 			if (set != null) {
 				ArmourSets.exchangeSets(player, set);
 				return;
 			}
-			if (Firemaking.isFiremaking(player, itemUsed, usedWith))
+
+			if (Settings.DEBUG) {
+				Logger.log("ItemHandler", "Used:" + itemUsed.getId() + ", With:" + usedWith.getId());
+			}
+
+			if(Firemaking.isFiremaking(player, itemUsed, usedWith)) {
 				return;
-			else if (contains(1755, Gem.OPAL.getUncut(), itemUsed, usedWith))
+			}
+
+			// handle crafting
+			if(contains(1755, Gem.OPAL.getUncut(), itemUsed, usedWith)) {
 				GemCutting.cut(player, Gem.OPAL);
-			else if (contains(1755, Gem.JADE.getUncut(), itemUsed, usedWith))
+				return;
+			}
+
+			if(contains(1755, Gem.JADE.getUncut(), itemUsed, usedWith)) {
 				GemCutting.cut(player, Gem.JADE);
-			else if (contains(1755, Gem.RED_TOPAZ.getUncut(), itemUsed,
-					usedWith))
+				return;
+			}
+
+			if(contains(1755, Gem.RED_TOPAZ.getUncut(), itemUsed, usedWith)) {
 				GemCutting.cut(player, Gem.RED_TOPAZ);
-			else if (contains(1755, Gem.SAPPHIRE.getUncut(), itemUsed, usedWith))
+				return;
+			}
+
+			if(contains(1755, Gem.SAPPHIRE.getUncut(), itemUsed, usedWith)) {
 				GemCutting.cut(player, Gem.SAPPHIRE);
-			else if (contains(1755, Gem.EMERALD.getUncut(), itemUsed, usedWith))
+				return;
+			}
+
+			if(contains(1755, Gem.EMERALD.getUncut(), itemUsed, usedWith)) {
 				GemCutting.cut(player, Gem.EMERALD);
-			else if (contains(1755, Gem.RUBY.getUncut(), itemUsed, usedWith))
+				return;
+			}
+
+			if(contains(1755, Gem.RUBY.getUncut(), itemUsed, usedWith)) {
 				GemCutting.cut(player, Gem.RUBY);
-			else if (contains(1755, Gem.DIAMOND.getUncut(), itemUsed, usedWith))
+				return;
+			}
+
+			if(contains(1755, Gem.DIAMOND.getUncut(), itemUsed, usedWith)) {
 				GemCutting.cut(player, Gem.DIAMOND);
-			else if (contains(1755, Gem.DRAGONSTONE.getUncut(), itemUsed,
-					usedWith))
+				return;
+			}
+
+			if(contains(1755, Gem.DRAGONSTONE.getUncut(), itemUsed,	usedWith)) {
 				GemCutting.cut(player, Gem.DRAGONSTONE);
-			else if (contains(1755, Gem.ONYX.getUncut(), itemUsed, usedWith))
+				return;
+			}
+
+			if(contains(1755, Gem.ONYX.getUncut(), itemUsed, usedWith)) {
 				GemCutting.cut(player, Gem.ONYX);
-			else
-				player.getPackets().sendGameMessage(
-						"Nothing interesting happens.");
-			if (Settings.DEBUG)
-				Logger.log("ItemHandler", "Used:" + itemUsed.getId()
-						+ ", With:" + usedWith.getId());
+				return;
+			}
+
+			// handle potion combining
+			if(Pots.mixPotion(player, fromSlot, toSlot, itemUsedId, itemUsedWithId)) {
+				return;
+			}
+
+			player.getPackets().sendGameMessage("Nothing interesting happens.");
+
 		}
 	}
 
