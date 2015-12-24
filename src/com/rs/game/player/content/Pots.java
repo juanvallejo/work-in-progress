@@ -799,20 +799,6 @@ public final class Pots {
 	}
 
 	public static boolean mixPotion(Player player, int usedSlot, int withSlot, int idUsed, int idUsedWith) {
-		/*Item itemUsed = player.getInventory().getItem(usedSlot);
-		Item usedWith = player.getInventory().getItem(withSlot);
-		Pot first = getPot(itemUsed.getId());
-		Pot second = getPot(usedWith.getId());
-		String name = usedWith.getDefinitions().getName();
-		if (first == null || second == null)
-			return false;
-		if (first.effect != second.effect)
-			return false;
-		else if (name.contains("4")) {
-			player.getPackets().sendGameMessage("That potion is full.");
-			return false;
-		} else if (itemUsed.getId() == 229)// empty vial
-			return false;*/
 
 		boolean combinationExists = false;
 		int[] potionAmountIds = null;
@@ -855,7 +841,15 @@ public final class Pots {
 			return false;
 		}
 
-		if(itemUsedWithName.contains("4")) {
+		int maxPotionDoseAmount = 4;
+		boolean isFlask = false;
+
+		if(itemUsedWithName.contains("flask")) {
+			maxPotionDoseAmount = 6;
+			isFlask = true;
+		}
+
+		if(itemUsedWithName.contains(Integer.toString(maxPotionDoseAmount))) {
 			player.getPackets().sendGameMessage("That potion is already full.");
 			return true;
 		}
@@ -863,13 +857,21 @@ public final class Pots {
 		int itemUsedAmount = 3;
 		int itemUsedWithAmount = 3;
 
-		if(itemUsedName.contains("2")) {
+		if(itemUsedName.contains("5")) {
+			itemUsedAmount = 5;
+		} else if(itemUsedName.contains("4")) {
+			itemUsedAmount = 4;
+		} else if(itemUsedName.contains("2")) {
 			itemUsedAmount = 2;
 		} else if(itemUsedName.contains("1")) {
 			itemUsedAmount = 1;
 		}
 
-		if(itemUsedWithName.contains("2")) {
+		if(itemUsedWithName.contains("5")) {
+			itemUsedWithAmount = 5;
+		} else if(itemUsedWithName.contains("4")) {
+			itemUsedWithAmount = 4;
+		} else if(itemUsedWithName.contains("2")) {
 			itemUsedWithAmount = 2;
 		} else if(itemUsedWithName.contains("1")) {
 			itemUsedWithAmount = 1;
@@ -883,12 +885,12 @@ public final class Pots {
 		// the new one should have left
 		int remainderItemUsed = itemUsedAmount;
 
-		if(baseAmountItemUsedWith >= 4) {
-			remainderItemUsed = baseAmountItemUsedWith % 4;
-			baseAmountItemUsedWith = 4;
+		if(baseAmountItemUsedWith >= maxPotionDoseAmount) {
+			remainderItemUsed = baseAmountItemUsedWith % maxPotionDoseAmount;
+			baseAmountItemUsedWith = maxPotionDoseAmount;
 		}
 
-		if(itemUsedWithAmount + itemUsedAmount < 4) {
+		if(itemUsedWithAmount + itemUsedAmount < maxPotionDoseAmount) {
 			remainderItemUsed = 0;
 		}
 
@@ -896,13 +898,19 @@ public final class Pots {
 		player.getInventory().deleteItem(idUsedWith, 1);
 		player.getInventory().deleteItem(idUsed, 1);
 
-		player.getInventory().addItem(potionAmountIds[4 - baseAmountItemUsedWith], 1);
+		player.getInventory().addItem(potionAmountIds[maxPotionDoseAmount - baseAmountItemUsedWith], 1);
 
 		// if used potion had one dose left, replace with empty vial
 		if(remainderItemUsed == 0) {
-			player.getInventory().addItem(229, 1);
+
+			if(isFlask) {
+				player.getPackets().sendGameMessage("Your empty flask shatters to pieces.");
+			} else {
+				player.getInventory().addItem(229, 1);
+			}
+
 		} else {
-			player.getInventory().addItem(potionAmountIds[4 - remainderItemUsed], 1);	
+			player.getInventory().addItem(potionAmountIds[maxPotionDoseAmount - remainderItemUsed], 1);	
 		}
 
 		return true;
