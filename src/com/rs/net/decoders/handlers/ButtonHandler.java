@@ -2370,17 +2370,25 @@ return false;
 	public static void openEquipmentBonuses(final Player player, boolean banking) {
 
 		player.stopAll();
+
 		player.getInterfaceManager().sendInventoryInterface(670);
 		player.getInterfaceManager().sendInterface(667);
+
 		player.getPackets().sendConfigByFile(4894, banking ? 1 : 0);
-		player.getPackets().sendItems(93,
-				player.getInventory().getItems());
-		player.getPackets().sendInterSetItemsOptionsScript(670, 0, 93,
-				4, 7, "Equip", "Compare", "Stats", "Examine");
-		player.getPackets().sendUnlockIComponentOptionSlots(670, 0, 0,
-				27, 0, 1, 2, 3);
+		
+		// send player's inventory
+		player.getPackets().sendItems(93, player.getInventory().getItems());
+
+		// equip, compare, stats, examine
+		player.getPackets().sendInterSetItemsOptionsScript(670, 0, 93, 4, 7, "Equip", "Examine");
+
+		player.getPackets().sendUnlockIComponentOptionSlots(667, 9, 0, 14, 0);
+		player.getPackets().sendUnlockIComponentOptionSlots(670, 0, 0, 27, 0, 1, 2, 3);
+
 		player.getPackets().sendIComponentSettings(667, 14, 0, 13, 1030);
+
 		refreshEquipBonuses(player);
+
 		if(banking) {
 			player.getTemporaryAttributtes().put("Banking", Boolean.TRUE);
 			player.setCloseInterfacesEvent(new Runnable() {
