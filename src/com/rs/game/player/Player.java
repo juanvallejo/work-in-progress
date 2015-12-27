@@ -3097,7 +3097,11 @@ public class Player extends Entity {
 
 				if (prayer.getPrayerpoints() >= drain) {
 					hit.setDamage((int) (hit.getDamage() * 0.70));
-					this.getPackets().sendGameMessage("Your shield absorbs " + (originalDamage - hit.getDamage()) + " damage.");
+
+					if(originalDamage - hit.getDamage() > 0) {
+						this.getPackets().sendGameMessage("Your shield absorbs " + (originalDamage - hit.getDamage()) + " damage.");
+					}
+
 					prayer.drainPrayer(drain);
 				}
 
@@ -3110,7 +3114,11 @@ public class Player extends Entity {
 
 			if (prayer.getPrayerpoints() >= drain) {
 				hit.setDamage((int) (hit.getDamage() * 0.70));
-				this.getPackets().sendGameMessage("Your shield absorbs " + (originalDamage - hit.getDamage()) + " damage.");
+
+				if(originalDamage - hit.getDamage() > 0) {
+					this.getPackets().sendGameMessage("Your shield absorbs " + (originalDamage - hit.getDamage()) + " damage.");
+				}
+				
 				prayer.drainPrayer(drain);
 			}
 		}
