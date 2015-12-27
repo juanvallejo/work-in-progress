@@ -807,6 +807,7 @@ public class NPC extends Entity implements Serializable {
                     || dropName.contains("virtus")
                     || dropName.contains("armadyl")
                     || dropName.contains("steadfast")
+                    || dropName.contains("spirit shield")
                     || dropName.contains("ragefire")
                     || dropName.contains("dragonfire")
                     || dropName.contains("dragon claws")

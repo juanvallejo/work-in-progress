@@ -3093,6 +3093,7 @@ public class Player extends Entity {
 			int drain = (int) (Math.ceil(hit.getDamage() * 0.3) / 2);
 			if (prayer.getPrayerpoints() >= drain) {
 				hit.setDamage((int) (hit.getDamage() * 0.70));
+				this.getPackets().sendGameMessage("Your shield absorbs 30% of the damage.");
 				prayer.drainPrayer(drain);
 			}
 		}
