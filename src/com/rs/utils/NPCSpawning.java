@@ -269,7 +269,8 @@ public class NPCSpawning {
 		World.deleteObject(new WorldTile(3285, 3493, 0));
 		World.deleteObject(new WorldTile(2971, 3370, 0));
 
-
+		// spanw chaos elemental
+		World.spawnNPC(3200, new WorldTile(3250, 3925, 0), -1, true, false);
 		
 	}
 

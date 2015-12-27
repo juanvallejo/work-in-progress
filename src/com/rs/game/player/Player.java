@@ -4124,7 +4124,7 @@ public class Player extends Entity {
 	}
 
 	public void addFireImmune(long time) {
-		fireImmune = time + Utils.currentTimeMillis(); ////--
+		fireImmune = time + Utils.currentTimeMillis();
 	}
 
 	public void addSuperFireImmune(long time) {

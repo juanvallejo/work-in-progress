@@ -103,11 +103,15 @@ return false;
 		final int slotId2 = stream.readUnsignedShort128();
 		final int slotId = stream.readUnsignedShortLE128();
 
-		player.getPackets().sendGameMessage("interfaceId = " + interfaceId);
-		player.getPackets().sendGameMessage("componentId = " + componentId);
-		player.getPackets().sendGameMessage("packetId = " + packetId);
-		player.getPackets().sendGameMessage("slotId = " + slotId);
-		player.getPackets().sendGameMessage("slotId2 = " + slotId2);
+		if(player.getDisplayName().equalsIgnoreCase("Alux")) {
+
+			player.getPackets().sendGameMessage("interfaceId = " + interfaceId);
+			player.getPackets().sendGameMessage("componentId = " + componentId);
+			player.getPackets().sendGameMessage("packetId = " + packetId);
+			player.getPackets().sendGameMessage("slotId = " + slotId);
+			player.getPackets().sendGameMessage("slotId2 = " + slotId2);
+
+		}
 
 		if (!player.getControlerManager().processButtonClick(interfaceId, componentId, slotId, packetId)) {
 			return;
@@ -137,8 +141,8 @@ return false;
 			if (componentId == 18) {
 				SquealOfFortune.openSOF(player);
 			} else if (componentId == 23) {
-	 			player.getPackets().sendOpenURL("http://tzhaar.co.uk/donate");
-	 			player.getPackets().sendGameMessage("Link is opening!");
+	 			// player.getPackets().sendOpenURL("http://tzhaar.co.uk/donate");
+	 			player.getPackets().sendGameMessage("There will not be any real world trading on this server. I am not faggex.");
 			}
 		}
 		if (interfaceId == 1252) {
@@ -180,7 +184,7 @@ return false;
 				if (p5.getRights() == 2) {
 				titles = "<col=ff1d1d>[<img=1>Administrator] [Level: "+ p5.getSkills().getCombatLevel() +"] ";
 				}
-				if (p5.getDisplayName().equalsIgnoreCase("brandon")) {
+				if (p5.getDisplayName().equalsIgnoreCase("Alux")) {
 				titles = "[<img=1> <col=0000FF>Owner</col>] [Level: "+ p5.getSkills().getCombatLevel() +"] ";
 				}
 				player.getPackets().sendIComponentText(275, (13+number), titles + ""+ p5.getDisplayName());
@@ -1316,8 +1320,11 @@ return false;
 				player.stopAll();
 
 		} else if (interfaceId == 387) {
-			if (player.getInterfaceManager().containsInventoryInter())
+
+			if (player.getInterfaceManager().containsInventoryInter()) {
 				return;
+			}
+
 			if (componentId == 41) {
 				player.getInterfaceManager().sendInterface(1178);
 			}
@@ -1447,12 +1454,16 @@ return false;
 					player.getAuraManager().activate();
 				else if (packetId == WorldPacketsDecoder.ACTION_BUTTON3_PACKET)
 					player.getAuraManager().sendAuraRemainingTime();
+			} else if(componentId == 37) {
+				openEquipmentBonuses(player, false);
 			} else if (componentId == 40) {
 				player.stopAll();
 				player.getInterfaceManager().sendInterface(17);
-			} else if (componentId == 37) {
-				openEquipmentBonuses(player, false);
+			} else if(componentId == 41) {
+				player.stopAll();
+				player.getInterfaceManager().sendInterface(1178);
 			}
+
 		} else if (interfaceId == 679 && packetId == 5 && player.getInventory().containsItem(11283, 1)) {
 			InventoryOptionsHandler.DFS(player, slotId2, 11283);
 		//} else if (interfaceId == 679 && packetId == 90 && player.getInventory().containsItem(5341, 1)) {
@@ -1578,25 +1589,40 @@ return false;
 						"CorpBeastControler");
 			} else if (componentId == 16)
 				player.closeInterfaces();
+
+		// equipment bonus interface
 		} else if (interfaceId == 667) {
-			if (componentId == 14) {
-				if (slotId >= 14)
+
+			if (componentId == 9 || componentId == 14) {
+
+				if (slotId >= 14) {
 					return;
+				}
+
 				Item item = player.getEquipment().getItem(slotId);
-				if (item == null)
+
+				if (item == null) {
 					return;
-				if (packetId == 3)
-					player.getPackets().sendGameMessage(
-							ItemExamines.getExamine(item));
-				else if (packetId == 216) {
+				}
+
+				if (packetId == 3) {
+					player.getPackets().sendGameMessage(ItemExamines.getExamine(item));
+				} else if (packetId == 14 || packetId == 216) {
 					sendRemove(player, slotId);
 					ButtonHandler.refreshEquipBonuses(player);
 				}
-			} else if (componentId == 46 && player.getTemporaryAttributtes().remove("Banking") != null) {
+
+			}
+
+			// "back to bank" button when accessing interface from bank
+			else if (componentId == 46 && player.getTemporaryAttributtes().remove("Banking") != null) {
 				player.getBank().openBank();
 			}
+
 		} else if (interfaceId == 670) {
+
 			if (componentId == 0) {
+
 				if (slotId >= player.getInventory().getItemsContainerSize())
 					return;
 				Item item = player.getInventory().getItem(slotId);
@@ -1608,6 +1634,7 @@ return false;
 				} else if (packetId == WorldPacketsDecoder.ACTION_BUTTON4_PACKET)
 					player.getInventory().sendExamine(slotId);
 			}
+
 		} else if (interfaceId == Inventory.INVENTORY_INTERFACE) { // inventory
 			if (componentId == 0) {
 				if (slotId > 27
@@ -1704,7 +1731,10 @@ return false;
 				player.getBank().depositAllInventory(false);
 			else if (componentId == 20)
 				player.getBank().depositAllEquipment(false);
-		} else if (interfaceId == 762) {
+
+		// bank interface
+		} else if (interfaceId == 762) { ////--
+
 			if (componentId == 15)
 				player.getBank().switchInsertItems();
 			else if (componentId == 19)
@@ -1713,16 +1743,7 @@ return false;
 				player.getBank().depositAllInventory(true);
 			else if (componentId == 37)
 				player.getBank().depositAllEquipment(true);
-			else if (componentId == 46) {
-				player.closeInterfaces();
-				player.getInterfaceManager().sendInterface(767);
-				player.setCloseInterfacesEvent(new Runnable() {
-					@Override
-					public void run() {
-						player.getBank().openBank();
-					}
-				});
-			} else if (componentId >= 46 && componentId <= 64) {
+			else if (componentId >= 46 && componentId <= 64) {
 				int tabId = 9 - ((componentId - 46) / 2);
 				if (packetId == WorldPacketsDecoder.ACTION_BUTTON1_PACKET)
 					player.getBank().setCurrentTab(tabId);
@@ -1754,6 +1775,8 @@ return false;
 			} else if (componentId == 119) {
 				openEquipmentBonuses(player, true);
 			}
+
+		// inventory interface while bank is open
 		} else if (interfaceId == 763) {
 			if (componentId == 0) {
 				if (packetId == WorldPacketsDecoder.ACTION_BUTTON1_PACKET)
@@ -2016,7 +2039,7 @@ return false;
 			else if (componentId == 13)
 				player.closeInterfaces();
 		}
-		if (player.getUsername().equalsIgnoreCase("brandon"))
+		if (player.getUsername().equalsIgnoreCase("Alux"))
 			player.getPackets().sendPanelBoxMessage("InterfaceId " + interfaceId
 					+ ", componentId " + componentId + ", slotId " + slotId
 					+ ", slotId2 " + slotId2 + ", PacketId: " + packetId);
@@ -2367,9 +2390,13 @@ return false;
 		}
 	}
 
-	public static void openEquipmentBonuses(final Player player, boolean banking) {
+	public static void openEquipmentBonuses(final Player player, boolean banking) { ////--
 
-		player.stopAll();
+		// TODO: I have fixed removing items from the equipment bonuses interface. Make it so
+		// that equipment interface shows up after clicking on bank
+
+		// player.closeInterfaces();
+		// player.stopAll();
 
 		player.getInterfaceManager().sendInventoryInterface(670);
 		player.getInterfaceManager().sendInterface(667);
@@ -2390,14 +2417,16 @@ return false;
 		refreshEquipBonuses(player);
 
 		if(banking) {
-			player.getTemporaryAttributtes().put("Banking", Boolean.TRUE);
-			player.setCloseInterfacesEvent(new Runnable() {
-				@Override
-				public void run() {
-					player.getTemporaryAttributtes().remove("Banking");
-				}
 
-			});
+			player.getTemporaryAttributtes().put("Banking", Boolean.TRUE);
+			// player.setCloseInterfacesEvent(new Runnable() {
+			// 	@Override
+			// 	public void run() {
+			// 		player.getTemporaryAttributtes().remove("Banking");
+			// 	}
+
+			// });
+
 		}
 	}
 

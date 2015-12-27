@@ -240,13 +240,13 @@ public class NPC extends Entity implements Serializable {
                              if(id == 5080)
                                  setRandomWalk(true);
                              if(id == 2998)
-                                 setName("Highscores & Drop Log's");
+                                 setName("Highscores & Drop Logs");
                              if(id == 231)
                                  setName("Skilling Teleports");
                              if(id == 3373)
                                  setName("Training Teleports");
                              if(id == 410)
-                                 setName("Quests & Minigame's Teleports");
+                                 setName("Quests & Minigames Teleports");
                              if(id == 549)
                                  setName("General Store");
                              if(id == 522)
@@ -805,8 +805,11 @@ public class NPC extends Entity implements Serializable {
                     if (dropName.contains("pernix") 
                     || dropName.contains("torva")
                     || dropName.contains("virtus")
+                    || dropName.contains("armadyl")
                     || dropName.contains("steadfast")
                     || dropName.contains("ragefire")
+                    || dropName.contains("dragonfire")
+                    || dropName.contains("dragon claws")
                     || dropName.contains("glaiven")
                     || dropName.contains("saradomin")
                     || dropName.contains("zamorak")
@@ -818,7 +821,15 @@ public class NPC extends Entity implements Serializable {
                     || dropName.contains("polypore")
                     || dropName.contains("ganodermic")
                     || dropName.contains("bandos")) {
-                    	 World.sendWorldMessage("<img=5>[Drop Feed]<col=FF0000> " + player.getDisplayName() + "</col> just recieved a <col=FF0000>"+ dropName +"</col> drop!", false);
+
+                    	char firstChar = dropName.toLowerCase().charAt(0);
+                    	String article = "a";
+
+                    	if(firstChar == 'a' || firstChar == 'e' || firstChar == 'i' || firstChar == 'o' || firstChar == 'u') {
+                    		article = "an";
+                    	}
+
+                    	World.sendWorldMessage("<img=5>Drop Feed<col=FF0000> " + player.getDisplayName() + "</col> just recieved " + article +" <col=FF0000>"+ dropName +"</col> drop!", false);
                     }
                     /**
                      * Drop Log System

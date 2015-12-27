@@ -564,6 +564,12 @@ public final class World {
 		else 
 			n = new NPC(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea,
 					spawned);
+
+			// set random walk on for chaos elemental
+			if(id == 3200) {
+				n.setRandomWalk(true);
+			}
+
 		return n;
 	}
 

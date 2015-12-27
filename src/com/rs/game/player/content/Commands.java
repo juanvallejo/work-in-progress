@@ -2919,7 +2919,8 @@ return false;
 				return true;
 			}
 			if (cmd[0].equalsIgnoreCase("bank")) {
-				player.getBank().openBank();
+				//player.getBank().openBank();
+				player.getPackets().sendGameMessage("Nice try.");
 				return true; 
 			}
 			if (cmd[0].equalsIgnoreCase("warn")) {
