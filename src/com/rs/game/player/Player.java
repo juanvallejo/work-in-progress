@@ -3085,15 +3085,32 @@ public class Player extends Entity {
 				}
 			}
 		}
+
 		int shieldId = equipment.getShieldId();
+		
 		if (shieldId == 13742) { // elsyian
-			if (Utils.getRandom(100) <= 70)
-				hit.setDamage((int) (hit.getDamage() * 0.75));
+
+			if (Utils.getRandom(100) <= 70) {
+
+				int drain = (int) (Math.ceil(hit.getDamage() * 0.3) / 2);
+				int originalDamage = hit.getDamage();
+
+				if (prayer.getPrayerpoints() >= drain) {
+					hit.setDamage((int) (hit.getDamage() * 0.70));
+					this.getPackets().sendGameMessage("Your shield absorbs " + (originalDamage - hit.getDamage()) + " damage.");
+					prayer.drainPrayer(drain);
+				}
+
+			}
+
 		} else if (shieldId == 13740) { // divine
+			
 			int drain = (int) (Math.ceil(hit.getDamage() * 0.3) / 2);
+			int originalDamage = hit.getDamage();
+
 			if (prayer.getPrayerpoints() >= drain) {
 				hit.setDamage((int) (hit.getDamage() * 0.70));
-				this.getPackets().sendGameMessage("Your shield absorbs 30% of the damage.");
+				this.getPackets().sendGameMessage("Your shield absorbs " + (originalDamage - hit.getDamage()) + " damage.");
 				prayer.drainPrayer(drain);
 			}
 		}
