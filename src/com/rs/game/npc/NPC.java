@@ -71,6 +71,9 @@ public class NPC extends Entity implements Serializable {
 	private boolean forceMultiAttacked;
 	private boolean noDistanceCheck;
 
+	// used for bgs
+	private int defenceDrainTicks = -1;
+
 	// npc masks
 	private transient Transformation nextTransformation;
 	//name changing masks
@@ -628,6 +631,7 @@ public class NPC extends Entity implements Serializable {
 		super.reset();
 		setDirection(getRespawnDirection());
 		combat.reset();
+		defenceDrainTicks = -1;
 		bonuses = NPCBonuses.getBonuses(id); // back to real bonuses
 		forceWalk = null;
 	}
@@ -639,6 +643,57 @@ public class NPC extends Entity implements Serializable {
 		setFinished(true);
 		World.updateEntityRegion(this);
 		World.removeNPC(this);
+	}
+
+	// usually called when bgs special attack is used on npc
+	public void drainDefence(int drainAmount) { ////--
+
+		if(defenceDrainTicks == -1) {
+
+			final int finalDrainAmount = drainAmount;
+			final NPC finalNPC = this;
+
+			WorldTasksManager.schedule(new WorldTask() {
+
+				int thisDrainAmount = finalDrainAmount;
+				NPC thisNPC = finalNPC;
+				boolean started = false;
+
+				@Override
+				public void run() {
+					
+					if(!started) {
+						finalNPC.defenceDrainTicks = thisDrainAmount;
+					}
+
+					if(thisNPC.isDead()) {
+						System.out.println("NPC has died");
+						return;
+					}
+
+					if(thisNPC.defenceDrainTicks < 0) {
+						stop();
+						return;
+					}
+
+					System.out.println("TICK");
+
+					thisNPC.defenceDrainTicks--;
+				}
+
+			}, 0, 10);
+
+			return;
+		}
+
+		// assume defence already drained, drain again
+		defenceDrainTicks += drainAmount;
+
+	}
+
+	// takes into account drained defence
+	public int getDrainedDefenceModifier() {
+		return this.defenceDrainTicks <= 0 ? 0 : this.defenceDrainTicks;
 	}
 
 	public void setRespawnTask() {
