@@ -52,7 +52,6 @@ public class Cape extends Dialogue {
 		    player.getPackets().sendIComponentText(275, 33, "");
 		    player.getPackets().sendIComponentText(275, 34, "You have fished " + player.fish + "/750 fish.");
 		    player.getPackets().sendIComponentText(275, 35, "You have burned " + player.logs + "/250 logs.");
-		    player.getPackets().sendIComponentText(275, 36, "You have chopped " + player.wc + "/350 logs.");
 		    player.getPackets().sendIComponentText(275, 37, "You have opened " + player.chest + "/15 crystal key chests.");
 		    player.getPackets().sendIComponentText(275, 38, "You have stolen " + player.thieve + "/700 rune scimitars.");
 		    player.getPackets().sendIComponentText(275, 39, "You have obtained " + player.slayer + "/700 pieces of eight.");

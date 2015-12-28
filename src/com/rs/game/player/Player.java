@@ -2791,7 +2791,7 @@ public class Player extends Entity {
 	
 	public void completedCompletionistCape() {
 		for (int i = 0; i < 23; i++) {
-			if (this.getSkills().getLevel(i) >= 99 && getSkills().getLevel(24) >= 120 && fish >= 749 && logs >= 249 && wc >= 349
+			if (this.getSkills().getLevel(i) >= 99 && getSkills().getLevel(24) >= 120 && fish >= 749 && wc >= 349
 					&& chest >= 14 && slayer >= 699 && thieve >= 699) {
 				setCompletedComp();
 				return;
