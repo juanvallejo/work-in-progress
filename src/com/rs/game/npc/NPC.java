@@ -45,6 +45,8 @@ import com.rs.utils.Utils;
 import com.rs.game.player.Skills;
 import com.rs.game.player.content.Burying.Bone;
 
+import com.rs.game.player.CombatDefinitions;
+
 public class NPC extends Entity implements Serializable {
 
 	private static final long serialVersionUID = -4794678936277614443L;
@@ -646,12 +648,18 @@ public class NPC extends Entity implements Serializable {
 	}
 
 	// usually called when bgs special attack is used on npc
-	public void drainDefence(int drainAmount) { ////--
+	public void drainDefence(Player player, int drainAmount, int weaponId, int attackStyle) { ////--
 
-		if(defenceDrainTicks == -1) {
+		int npcDefenceBonus = this.getBonuses() != null ? this.getBonuses()[CombatDefinitions.getMeleeDefenceBonus(CombatDefinitions.getMeleeBonusStyle(weaponId, attackStyle))] : 0;
+		final int ratioDrainAmount = (int) (((drainAmount * (npcDefenceBonus * 9)) / 100) / 10);
 
-			final int finalDrainAmount = drainAmount;
+		if(defenceDrainTicks <= 0) {
+
+			// player.getPackets().sendGameMessage("getting ready to drain defence by " + ratioDrainAmount + ". (normal drain on player would have been " + drainAmount + ")");
+
+			final int finalDrainAmount = ratioDrainAmount;
 			final NPC finalNPC = this;
+			final Player finalPlayer = player;
 
 			WorldTasksManager.schedule(new WorldTask() {
 
@@ -659,35 +667,49 @@ public class NPC extends Entity implements Serializable {
 				NPC thisNPC = finalNPC;
 				boolean started = false;
 
+				int ticks = 0;
+
 				@Override
 				public void run() {
 					
 					if(!started) {
+						started = true;
 						finalNPC.defenceDrainTicks = thisDrainAmount;
 					}
 
 					if(thisNPC.isDead()) {
-						System.out.println("NPC has died");
-						return;
-					}
-
-					if(thisNPC.defenceDrainTicks < 0) {
+						// finalPlayer.getPackets().sendGameMessage("The npc has died.");
+						started = false;
+						thisNPC.defenceDrainTicks = -1;
 						stop();
 						return;
 					}
 
-					System.out.println("TICK");
+					if(thisNPC.defenceDrainTicks <= 0) {
+						// finalPlayer.getPackets().sendGameMessage("Stopping");
+						started = false;
+						thisNPC.defenceDrainTicks = -1;
+						stop();
+						return;
+					}
 
-					thisNPC.defenceDrainTicks--;
+					if(ticks % 60 == 0) {
+
+						// finalPlayer.getPackets().sendGameMessage("Tick " + thisNPC.defenceDrainTicks);
+						thisNPC.defenceDrainTicks--;
+					}
+
+					ticks++;
+
 				}
 
-			}, 0, 10);
+			}, 0, 1);
 
 			return;
 		}
 
 		// assume defence already drained, drain again
-		defenceDrainTicks += drainAmount;
+		defenceDrainTicks += ratioDrainAmount;
 
 	}
 

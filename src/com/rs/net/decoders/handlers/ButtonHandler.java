@@ -103,16 +103,6 @@ return false;
 		final int slotId2 = stream.readUnsignedShort128();
 		final int slotId = stream.readUnsignedShortLE128();
 
-		if(player.getDisplayName().equalsIgnoreCase("Alux")) {
-
-			player.getPackets().sendGameMessage("interfaceId = " + interfaceId);
-			player.getPackets().sendGameMessage("componentId = " + componentId);
-			player.getPackets().sendGameMessage("packetId = " + packetId);
-			player.getPackets().sendGameMessage("slotId = " + slotId);
-			player.getPackets().sendGameMessage("slotId2 = " + slotId2);
-
-		}
-
 		if (!player.getControlerManager().processButtonClick(interfaceId, componentId, slotId, packetId)) {
 			return;
 		}
