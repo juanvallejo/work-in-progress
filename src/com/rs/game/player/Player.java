@@ -2792,7 +2792,7 @@ public class Player extends Entity {
 	public void completedCompletionistCape() {
 		for (int i = 0; i < 23; i++) {
 			if (this.getSkills().getLevel(i) >= 99 && getSkills().getLevel(24) >= 120 && fish >= 749 && logs >= 249 && wc >= 349
-					&& chest >= 14 && con >= 749 && slayer >= 699 && thieve >= 699 && agility >= 99) {
+					&& chest >= 14 && slayer >= 699 && thieve >= 699) {
 				setCompletedComp();
 				return;
 			} else {
@@ -3118,7 +3118,7 @@ public class Player extends Entity {
 				if(originalDamage - hit.getDamage() > 0) {
 					this.getPackets().sendGameMessage("Your shield absorbs " + (originalDamage - hit.getDamage()) + " damage.");
 				}
-				
+
 				prayer.drainPrayer(drain);
 			}
 		}
