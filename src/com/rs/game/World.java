@@ -495,15 +495,21 @@ public final class World {
 			n = new GodwarsBandosFaction(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
 		else if (id == 6261 || id == 6263 || id == 6265)
 			n = GodWarsBosses.graardorMinions[(id - 6261) / 2] = new GodWarMinion(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
-		else if (id == 6260)
+		else if (id == 6260) {
 			n = new GeneralGraardor(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
-		else if (id == 6222)
+		} else if (id == 6222)
 			n = new KreeArra(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
-		else if (id == 6223 || id == 6225 || id == 6227)
+		else if (id == 6223 || id == 6225 || id == 6227) {
+
+			// fix skree from getting stuck in the corner
+			if(id == 6223) {
+				tile.setLocation(2840, 5302, 2);
+			}
+
 			n = GodWarsBosses.armadylMinions[(id - 6223) / 2] = new GodWarMinion(
 					id, tile, mapAreaNameHash, canBeAttackFromOutOfArea,
 					spawned);
-		else if (id == 6203)
+		} else if (id == 6203)
 			n = new KrilTstsaroth(id, tile, mapAreaNameHash,
 					canBeAttackFromOutOfArea, spawned);
 		else if (id == 6204 || id == 6206 || id == 6208)
@@ -516,14 +522,22 @@ public final class World {
 		else if (id >= 9462 && id <= 9467)
 			n = new Strykewyrm(id, tile, mapAreaNameHash,
 					canBeAttackFromOutOfArea);
-		else if (id == 6248 || id == 6250 || id == 6252)
+		else if (id == 6248 || id == 6250 || id == 6252) {
+
+			//fix Bree (6252) from getting stuck in the map
+			if(id == 6252) {
+				tile.setLocation(2898, 5261, 0);
+			}
+
 			n = GodWarsBosses.commanderMinions[(id - 6248) / 2] = new GodWarMinion(
 					id, tile, mapAreaNameHash, canBeAttackFromOutOfArea,
 					spawned);
-		else if (id == 6247)
-			n = new CommanderZilyana(id, tile, mapAreaNameHash,
-					canBeAttackFromOutOfArea, spawned);
-		else if (id == 8133)
+		} else if (id == 6247) {
+
+			// fix zilyana from getting stuck in a corner
+			tile.setLocation(2904, 5269, 0);
+			n = new CommanderZilyana(id, tile, mapAreaNameHash, canBeAttackFromOutOfArea, spawned);
+		} else if (id == 8133)
 			n = new CorporealBeast(id, tile, mapAreaNameHash,
 					canBeAttackFromOutOfArea, spawned);
 		else if (id == 15174)
@@ -671,8 +685,10 @@ public final class World {
 	public static boolean canMoveNPC(int plane, int x, int y, int size) {
 		for (int tileX = x; tileX < x + size; tileX++)
 			for (int tileY = y; tileY < y + size; tileY++)
-				if (getMask(plane, tileX, tileY) != 0)
+				if (getMask(plane, tileX, tileY) != 0) {
+					System.out.println("Warning, npc cannot move / is clipped");
 					return false;
+				}
 		return true;
 	}
 
