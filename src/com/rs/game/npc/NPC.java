@@ -786,12 +786,19 @@ public class NPC extends Entity implements Serializable {
 	
 	public void drop() {
 		try {
+
 			Drop[] drops = NPCDrops.getDrops(id);
-			if (drops == null)
+
+			if (drops == null) {
 				return;
+			}
+
 			Player killer = getMostDamageReceivedSourcePlayer();
-			if (killer == null)
+
+			if (killer == null) {
 				return;
+			}
+
 			SlayerTask task = killer.getSlayerTask();
 			if (this.getId() == 3375) {
 				killer.randomEventPoints++;
@@ -816,7 +823,9 @@ public class NPC extends Entity implements Serializable {
 				}
 			}
 			Drop[] possibleDrops = new Drop[drops.length];
+
 			int possibleDropsCount = 0;
+
 			for (Drop drop : drops) {
 				Item item = ItemDefinitions.getItemDefinitions(drop.getItemId()).isStackable() ? new Item(drop.getItemId(),
 						(drop.getMinAmount() * Settings.DROP_RATE)
