@@ -3765,6 +3765,13 @@ return false;
 				}
     				return true;
    			}
+   			if (cmd[0].equalsIgnoreCase("packnpcspawns")) {
+   				if (player.getUsername().equalsIgnoreCase(Settings.ADMIN_NAME)) {
+    				NPCSpawns.packNPCSpawns();
+    				player.getPackets().sendGameMessage("You Packed The NPC Spawns.");
+				}
+    				return true;
+   			}
 			if (cmd[0].equalsIgnoreCase("home")) {
 				if (player.getUsername().equalsIgnoreCase(Settings.ADMIN_NAME)) {
 					player.setNextWorldTile(new WorldTile(2413, 2844, 0));
