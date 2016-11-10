@@ -40,6 +40,7 @@ public class dropEditor extends javax.swing.JFrame {
     private JProgressBar progressBar;
     private JPopupMenu tablePopup;
     private JMenuItem testItem;
+    private String currentNPCId;
  
     /**
      * Creates new form DropEditor
@@ -538,7 +539,11 @@ public class dropEditor extends javax.swing.JFrame {
             TreePath path = new TreePath(dropsTreeModel.getPathToRoot(n));
             dropsTree.scrollPathToVisible(path);
             dropsTree.setSelectionPath(path);
+
+            // set current npc id
+            currentNPCId = searchField.getText();
         } catch (Exception e) {
+
             JOptionPane.showMessageDialog(this, "Could not find the item.");
         }
     }//GEN-LAST:event_searchFieldActionPerformed
@@ -566,16 +571,28 @@ public class dropEditor extends javax.swing.JFrame {
  
     private void addNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addNewActionPerformed
         // try {
-        int npcid = Integer.parseInt(dropsTree.getLastSelectedPathComponent().toString());
-        // ArrayList<Drop> drops = loader.getDropArray().get(npcid);
-        loader.insertDrop(npcid, Drop.create(Integer.parseInt(JOptionPane.showInputDialog("Please enter the item ID for this drop.")), (int) 100.0, 1, 1, false));
- 
- 
-        loadDrop(npcid);
-        // } catch (NullPointerException e) {
- 
-        //JOptionPane.showMessageDialog(this, "Please select a drop first!");
-        //}
+        String npcID = currentNPCId;
+        if (dropsTree.getLastSelectedPathComponent() != null) {
+            npcID = dropsTree.getLastSelectedPathComponent().toString();
+        }
+        if(npcID == null) {
+            System.out.println("Null NPC ID");
+            return;
+        }
+
+        try {
+            int npcid = Integer.parseInt(npcID);
+            // ArrayList<Drop> drops = loader.getDropArray().get(npcid);
+            System.out.println("Adding drop for NPC with ID " + npcID);
+            loader.insertDrop(npcid, Drop.create(Integer.parseInt(JOptionPane.showInputDialog("Please enter the item ID for this drop.")), (int) 100.0, 1, 1, false));
+            loadDrop(npcid);
+        } catch(NullPointerException e) {
+            e.printStackTrace();
+            System.out.println("Null ID for the current NPC.");
+        } catch(Exception e) {
+            e.printStackTrace();
+            System.out.println("Error parsing npcid.");
+        }
     }//GEN-LAST:event_addNewActionPerformed
  
     private void addNewButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addNewButtonActionPerformed
