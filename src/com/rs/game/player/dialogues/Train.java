@@ -12,7 +12,7 @@ public class Train extends Dialogue {
 	@Override
 	public void start() {
 		sendOptionsDialogue("Select an option.",
-				"Rock Crabs.", "Yaks.", "Ape's (Ape Atoll)", "Never mind.");
+				"Rock Crabs.", "Yaks.", "Ape's (Ape Atoll)", "Frost / Iron Dragons", "Never mind.");
 	}
 
 	@Override
@@ -27,6 +27,9 @@ public class Train extends Dialogue {
 			Magic.sendNormalTeleportSpell(player, 0, 0, new WorldTile(2793, 2786, 0));
 		end();
 		} else if (componentId == OPTION_4) {
+			Magic.sendNormalTeleportSpell(player, 0, 0, new WorldTile(2910, 3933, 0));
+		end();
+		} else if (componentId == OPTION_5) {
 			end();
 		}
 		end();

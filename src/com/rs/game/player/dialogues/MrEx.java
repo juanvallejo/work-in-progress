@@ -70,7 +70,7 @@ public class MrEx extends Dialogue {
 			else if (componentId == OPTION_5) {
 				stage = 4;
 				sendOptionsDialogue("Where would you like to go?",
-						"Magic Bank.", "Mithril Dragons", "Fight Pits.",
+						"Magic Bank", "Mithril Dragons", "Fight Pits",
 						"Wests(PvP)", "More Options");
 			}
 		} else if (stage == 4) {
@@ -148,7 +148,7 @@ public class MrEx extends Dialogue {
 				Magic.sendNormalTeleportSpell(player, 0, 0, new WorldTile(2647, 9378, 0));*/
 			else if (componentId == OPTION_5) {
 				sendOptionsDialogue("Where would you like to go?",
-						"Nex.", "Bandos.", "Sara.", "Tormented Demons", 
+						"Nex", "Bandos", "Sara", "Tormented Demons", 
 						"More Options");
 				stage = 2;
 			}
