@@ -28,7 +28,7 @@ public final class NPCBonuses {
 		return npcBonuses.get(id);
 	}
 
-	private static void loadUnpackedNPCBonuses() {
+	public static void loadUnpackedNPCBonuses() {
 		Logger.log("NPCBonuses", "Packing npc bonuses...");
 		try {
 			DataOutputStream out = new DataOutputStream(new FileOutputStream(
@@ -39,7 +39,7 @@ public final class NPCBonuses {
 				String line = in.readLine();
 				if (line == null)
 					break;
-				if (line.startsWith("//"))
+				if (line.startsWith("//") || line.length() == 0)
 					continue;
 				String[] splitedLine = line.split(" - ", 2);
 				if (splitedLine.length != 2)

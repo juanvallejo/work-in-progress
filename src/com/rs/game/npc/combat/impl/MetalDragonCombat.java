@@ -107,13 +107,10 @@ public class MetalDragonCombat extends CombatScript {
 			if(player.getFireImmune() > Utils.currentTimeMillis()) {
 				player.getPackets().sendGameMessage("Your potion absorbs some of the dragon's breath!", true);
 			} else {
-
 				String fireProtectMethod = "prayer";
-
 				if(Combat.hasAntiDragProtection(target)) {
 					fireProtectMethod = "shield";
 				}
-
 				player.getPackets().sendGameMessage("Your " + fireProtectMethod + " absorbs most of the dragon's breath!", true);
 			}
 
