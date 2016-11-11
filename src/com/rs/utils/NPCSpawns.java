@@ -74,7 +74,6 @@ public final class NPCSpawns {
 			packNPCSpawns();
 	}
 
-	// TODO delete recursively
 	public static boolean deleteDir(File rootNode) {
 		if (rootNode.exists()) {
 			File[] files = rootNode.listFiles();

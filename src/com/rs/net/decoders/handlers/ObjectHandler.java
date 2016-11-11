@@ -2188,26 +2188,25 @@ public final class ObjectHandler {
 					if (player.getInventory().getFreeSlots() < 1) {
 						player.getPackets().sendGameMessage("Not enough space in your inventory.");
 						return;
-			} else {
-				player.getInventory().addItem(1333, 1);
-				if (player.getSkills().getLevel(17) == 1) {
-					player.getSkills().addXp(Skills.THIEVING, 1);
-				}
-				player.getSkills().addXp(Skills.THIEVING, player.getSkills().getLevel(17) / 2);
-				player.setNextAnimation(new Animation(881));
-				player.increaseThieve();//1.2k
-				player.lock(1);
-				}
+					} else {
+						player.getInventory().addItem(1325, 1);
+						if (player.getSkills().getLevel(17) == 1) {
+							player.getSkills().addXp(Skills.THIEVING, 1);
+						}
+						player.getSkills().addXp(Skills.THIEVING, player.getSkills().getLevel(17) / 2);
+						player.setNextAnimation(new Animation(881));
+						player.increaseThieve();//1.2k
+						player.lock(1);
+					}
 				else if (object.getId() == 4876)
 					if (player.getInventory().getFreeSlots() < 1) {
 						player.getPackets().sendGameMessage("Not enough space in your inventory.");
-			} else {
-				player.getInventory().addItem(1127, 1);
-				player.getSkills().addXp(Skills.THIEVING, 90);
-				player.setNextAnimation(new Animation(881));
-				player.increaseThieve();
-				}
-				
+					} else {
+						player.getInventory().addItem(1127, 1);
+						player.getSkills().addXp(Skills.THIEVING, 90);
+						player.setNextAnimation(new Animation(881));
+						player.increaseThieve();
+					}
 				else if (id == 62688)
 					player.getDialogueManager().startDialogue(
 							"SimpleMessage",
@@ -2226,7 +2225,7 @@ public final class ObjectHandler {
 					World.removeTemporaryObject(object, 50000, true);
 					player.getInventory().addItem(1779, 1);
 					//crucible
-				}else if (id == 67051)
+				} else if (id == 67051)
 					player.getDialogueManager().startDialogue("Marv", true);
 				else {
 					switch (objectDef.name.toLowerCase()) {

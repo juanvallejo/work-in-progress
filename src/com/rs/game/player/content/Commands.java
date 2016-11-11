@@ -62,6 +62,7 @@ import com.rs.utils.HashTag;
 import com.rs.utils.Hiscores;
 import com.rs.utils.ShopsHandler;
 import com.rs.utils.NPCSpawns;
+import com.rs.utils.ObjectSpawns;
 import com.rs.utils.NPCBonuses;
 import com.rs.utils.Donations;
 import com.rs.utils.Encrypt;
@@ -191,6 +192,11 @@ return false;
 				List<Integer> npcs = World.getRegion(player.getRegionId()).getNPCsIndexes();
 				for(int index = 0; index < npcs.size() + 1; index++)
 				World.getNPCs().get(npcs.get(index)).sendDeath(player);	
+				return true;
+			}
+			if (cmd[0].equalsIgnoreCase("packobjectspawns") && player.getUsername().equalsIgnoreCase(Settings.ADMIN_NAME)) {
+				ObjectSpawns.packObjectSpawns();
+				player.getPackets().sendGameMessage("You packed object spawns.");
 				return true;
 			}
 			if (cmd[0].equalsIgnoreCase("packnpcbonuses") && player.getUsername().equalsIgnoreCase(Settings.ADMIN_NAME)) {

@@ -23,11 +23,36 @@ public final class ObjectSpawns {
 			packObjectSpawns();
 	}
 
-	private static final void packObjectSpawns() {
+	private static boolean deleteDir(File rootNode) {
+		if (rootNode == null) {
+			return false;
+		}
+		File[] files = rootNode.listFiles();
+		if (files == null) {
+			return (rootNode.delete());
+		}
+		for(int i = 0; i < files.length; i++) {
+			if(files[i].isDirectory()) {
+				deleteDir(files[i]);
+				continue;
+			}
+			files[i].delete();
+		}
+		return (rootNode.delete());
+	}
+
+	public static final void packObjectSpawns() {
 		Logger.log("ObjectSpawns", "Packing object spawns...");
-		if (!new File("data/map/packedSpawns").mkdir())
+
+		File packedSpawns = new File("data/map/packedSpawns");
+		if(packedSpawns.exists()) {
+			deleteDir(packedSpawns);
+		}
+		if(!packedSpawns.mkdir()) {
 			throw new RuntimeException(
 					"Couldn't create packedSpawns directory.");
+		}
+
 		try {
 			BufferedReader in = new BufferedReader(new FileReader(
 					"data/map/unpackedSpawnsList.txt"));
@@ -35,7 +60,7 @@ public final class ObjectSpawns {
 				String line = in.readLine();
 				if (line == null)
 					break;
-				if (line.startsWith("//"))
+				if (line.startsWith("//") || line.length() == 0)
 					continue;
 				String[] splitedLine = line.split(" - ");
 				if (splitedLine.length != 2)
@@ -57,6 +82,7 @@ public final class ObjectSpawns {
 				addObjectSpawn(objectId, type, rotation, tile.getRegionId(),
 						tile, Boolean.parseBoolean(splitedLine3[3]));
 			}
+			Logger.log("ObjectSpawns", "Finished packing object spawns...");
 			in.close();
 		} catch (Throwable e) {
 			Logger.handle(e);
